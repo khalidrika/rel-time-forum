@@ -1,9 +1,9 @@
 package main
 
-import server "realtime/server"
+import server "realtime/backend"
 
 func main() {
-	if server.Initialise() {
+	if !server.Initialise() {
 		return
 	}
 }
