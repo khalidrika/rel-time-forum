@@ -3,7 +3,6 @@ package backend
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 	"time"
@@ -23,19 +22,17 @@ type Links struct {
 func Initialise() bool {
 	InitialiseLinks()
 	InitialiseDB()
-
 	return true
 }
 
 func InitialiseLinks() {
 	content, err := os.ReadFile("./backend/cloudLinks.json")
 	if err != nil {
-		fmt.Println("fild to read the file page error.json")
+		log.Fatalf("Failed to read the file cloudLinks.json: %v", err)
 		return
 	}
-	err = json.Unmarshal(content, &CloudLinks)
-	if err != nil {
-		fmt.Println("error from unmarchal")
+	if err = json.Unmarshal(content, &CloudLinks); err != nil {
+		log.Fatalf("Error unmarshalling JSON: %v", err)
 		return
 	}
 }
@@ -45,7 +42,7 @@ func InitialiseDB() {
 
 	DB, err = sql.Open("sqlite3", "./database/forum.db")
 	if err != nil {
-		log.Fatal("Failed to open SQLite database:", err)
+		log.Fatalf("Failed to open SQLite database: %v", err)
 	}
 	DB.SetMaxIdleConns(5)
 	DB.SetMaxOpenConns(10)
@@ -53,9 +50,9 @@ func InitialiseDB() {
 
 	constant, err := os.ReadFile("./database/schema.sql")
 	if err != nil {
-		log.Fatal("faild to get database tables:", err)
+		log.Fatalf("failed to get database tables: %v", err)
 	}
 	if _, err := DB.Exec(string(constant)); err != nil {
-		log.Fatal("faild to create database tables:", err)
+		log.Fatalf("failed to create database tables: %v", err)
 	}
 }
