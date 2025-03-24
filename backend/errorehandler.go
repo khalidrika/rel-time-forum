@@ -1,4 +1,6 @@
 package backend
 
-func ErrorHandler() {
+import "net/http"
+
+func ErrorHandler(w http.ResponseWriter) {
 }
