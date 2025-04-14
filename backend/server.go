@@ -9,8 +9,8 @@ import (
 )
 
 func StartServer() {
-	ruoter := Ruotes()
-	if err := Server(ruoter); err != nil {
+	router := Routes()
+	if err := Server(router); err != nil {
 		log.Fatalf("server encounterd an error: %v", err)
 	}
 }

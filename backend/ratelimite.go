@@ -16,5 +16,4 @@ func NewRetLimiter(intirval time.Duration) *RateLimiter {
 		visitors: make(map[string]time.Time),
 		intirval: intirval,
 	}
-	// z
 }

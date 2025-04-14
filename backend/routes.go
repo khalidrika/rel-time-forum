@@ -4,7 +4,7 @@ import (
 	"net/http"
 )
 
-func Ruotes() http.Handler {
+func Routes() http.Handler {
 	mux := http.NewServeMux()
 
 	// rl := NewRetLimiter(20 * time.Microsecond)

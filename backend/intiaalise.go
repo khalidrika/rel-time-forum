@@ -19,10 +19,9 @@ type Links struct {
 	ErrorPage string `json:"error"`
 }
 
-func Initialise() bool {
+func Initialise(){
 	InitialiseLinks()
 	InitialiseDB()
-	return true
 }
 
 func InitialiseLinks() {
