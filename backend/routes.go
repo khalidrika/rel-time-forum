@@ -6,8 +6,9 @@ import (
 
 func Routes() http.Handler {
 	mux := http.NewServeMux()
-
-	// rl := NewRetLimiter(20 * time.Microsecond)
+	fs := http.FileServer(http.Dir("../frontend"))
+	http.Handle("/frontend/", http.StripPrefix("/frontend/", fs))
 	mux.HandleFunc("/", HomeHandler)
+	mux.HandleFunc("/api/home-content", HomeContentHandler)
 	return mux
 }

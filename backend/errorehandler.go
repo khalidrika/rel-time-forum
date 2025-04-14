@@ -1,6 +1,12 @@
 package backend
 
-import "net/http"
+import (
+	"fmt"
+	"net/http"
+)
 
-func ErrorHandler(w http.ResponseWriter, msg1 string, statucode int) {
+func ErrorHandler(w http.ResponseWriter, message string, statusCode int) {
+	w.WriteHeader(statusCode)
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprintf(w, `{"error": "%s", "status": %d}`, message, statusCode)
 }

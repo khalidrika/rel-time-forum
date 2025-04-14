@@ -1,15 +1,33 @@
 package backend
 
-import "net/http"
+import (
+	"encoding/json"
+	"net/http"
+)
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		ErrorHandler(w, "page not fond", 404)
-		return
-	}
+	// if r.URL.Path != "/" {
+	// 	// ErrorHandler(w, "page not fond", 404)
+	// 	return
+	// }
 	if r.Method != http.MethodGet {
 		ErrorHandler(w, "method not alowd", 405)
 		return
 	}
-	ParseAndExecute(w, "", "frontend/index.html")
+	ParseAndExecute(w, "", "frontend/html/index.html")
+}
+
+func HomeContentHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		ErrorHandler(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Replace with dynamic or template-based HTML later
+	response := map[string]string{
+		"html": "<h1>Welcome to Real-Time Forum</h1><p>Live updates. Private chats. All here!</p>",
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
 }

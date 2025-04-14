@@ -1,6 +1,0 @@
-class home{
-    constructor() {
-        
-    }
-}
-// sdde
