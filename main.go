@@ -8,6 +8,5 @@ func main() {
 	server.Initialise()
 
 	server.StartServer()
-
 	server.DB.Close()
 }

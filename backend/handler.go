@@ -25,7 +25,7 @@ func HomeContentHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Replace with dynamic or template-based HTML later
 	response := map[string]string{
-		"html": "<h1>Welcome to Real-Time Forum</h1><p>Live updates. Private chats. All here!</p>",
+		"name": "khalidSS hi ",
 	}
 
 	w.Header().Set("Content-Type", "application/json")
