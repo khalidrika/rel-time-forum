@@ -5,11 +5,7 @@ import (
 	"net/http"
 )
 
-func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	// if r.URL.Path != "/" {
-	// 	// ErrorHandler(w, "page not fond", 404)
-	// 	return
-	// }
+func HomeHandler(w http.ResponseWriter, r *http.Request) {	
 	if r.Method != http.MethodGet {
 		ErrorHandler(w, "method not alowd", 405)
 		return
@@ -25,11 +21,10 @@ func HomeContentHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Replace with dynamic or template-based HTML later
 	response := map[string]string{
-		"name": "khalidSS hi ",
+		"name": "Khalid",
+		"fa":   "anouar",
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
-
-//§eee
