@@ -1,15 +1,7 @@
 body {
     font-family: Arial, sans-serif;
-    color: rgb(183, 177, 242);
     text-align: center;
-    background-color: rgb(255, 220, 204);
 }
-/* 
-* {
-    margin: 0;
-    box-sizing: border-box;
-} */
-
 
 .close-button {
     position: absolute;
@@ -19,8 +11,18 @@ body {
     cursor: pointer;
     color: var(--grey-mr);
 }
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* ensure it’s on top */
+  }
 .modal-dialog {
-    background-color: var(--white);
     width: 350px;
     padding: 2rem;
     border-radius: 12px;
@@ -29,6 +31,7 @@ body {
     max-height: 80vh;
     overflow-y: auto; 
     margin-top: 60px;
+    overflow-y: auto;
 }
 .form-container {
     transition: opacity 0.3s;
@@ -39,4 +42,126 @@ body {
 .modal-title {
     color: var(--title-color);
     line-height: 1.4;
+}
+.input-field {
+    width: 100%;
+    padding: 0.7rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-white);
+    background: var(--modal-input-bg);
+}
+.input-field:focus{
+    border-color: var(--title-color-hvr);
+    outline: none; 
+}
+:root.dark-mode .input-field {
+    color: rgb(243, 243, 243);
+    border: 1px solid rgb(136, 136, 136);
+}
+:root.dark-mode .input-field::placeholder {
+    color: rgb(174, 174, 174);
+}
+.input-field {
+    width: 100%;
+    padding: 0.7rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-white);
+    background: var(--modal-input-bg);
+}
+.input-field:focus{
+    border-color: var(--title-color-hvr);
+    outline: none; 
+}
+:root.dark-mode .input-field {
+    color: rgb(243, 243, 243);
+    border: 1px solid rgb(136, 136, 136);
+}
+
+:root.dark-mode .input-field::placeholder {
+    color: rgb(174, 174, 174);
+}
+
+.submit-button {
+    display: block;
+    width: 100%;
+    padding: 0.6rem;
+    border-radius: 999px;
+    border: none;
+    font-weight: 600;
+    color: var(--white);
+    background: var(--submit-btn);
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.submit-button:hover:not(.disabled) {
+    background: var(--title-color);
+}
+.modal-dialog {
+    background-color: var(--white);
+    width: 350px;
+    padding: 2rem;
+    border-radius: 12px;
+    text-align: center;
+    position: relative;
+    max-height: 80vh;
+    overflow-y: auto;
+    margin-top: 60px;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+user agent stylesheet
+div {
+    display: block;
+    unicode-bidi: isolate;
+}
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--body-bg);
+    /* background-image: linear-gradient(#def1fa, #2da1e4); */
+    /* background-attachment: fixed; */
+}
+:root {
+    --body-bg: rgb(75, 89, 69);
+    --body-bg2: #e5edff;
+    --light-blue: #83dafd;
+    --title-color: rgb(75, 89, 69);
+    --title-color-hvr: #ffdf2b;
+    --submit-btn: #0079d3;
+    --nav-btn: #1ad1ff;
+    --nav-btn-hvr: #3eacf5;
+    --nav-menu-hvr: #61c8f8;
+    --tag-pill: #adceff;
+    --action-btn: #98d3ff;
+    --profile-bg: url(https://i.postimg.cc/1XCwNjhF/cover.png);
+    --white: rgb(178, 201, 173);
+    --modal-input-bg: #f4f4f4;
+    --theme-toggle: #fefefe;
+    --suggestion-list: #eee;
+    --border-white: #ddd;
+    --submit-grey: #ccc;
+    --border-grey: #c4c4c4;
+    --light-grey: #7e7e7e;
+    --tagclose-btn: #646464;
+    --filter-title: #3f3f3f;
+    --content-grey: #333;
+    --grey-mr: #252525;
+    --dark-grey: #111;
+    --trans-modal: rgba(0, 0, 0, 0.5);
+    --post-card-shadow: rgba(104, 104, 104, 0.315);
+    --notif-shadow: rgba(0, 0, 0, 0.2);
+    --navBar-shadow: rgba(0, 0, 0, 0.1);
+    --navMenu-shadow: rgba(0, 0, 0, 0.05);
+    --noscript-bg: #fcf0f0;
+    --noscript-red: rgb(250, 99, 99);
+    --notification-red: #ff4d4d;
+    --red-color: red;
+    --orange: orange;
+    --orange-hvr: rgb(255, 72, 0);
 }

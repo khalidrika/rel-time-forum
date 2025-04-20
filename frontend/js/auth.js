@@ -1,5 +1,6 @@
 function renderLoginForm() {
   const form = `
+  <div class="modal-overlay">
   <div class="modal-dialog">
   <span id="closeModalBtn" class="close-button">×</span>
   <div id="loginContainer" class="form-container">
@@ -19,6 +20,7 @@ function renderLoginForm() {
     </form>
     <p>Don't have an account? <a href="#" id="show-register">Register here</a></p>
     <div id="error" style="color: red;"></div>
+    </div>
     </div>
     </div>
   `;
