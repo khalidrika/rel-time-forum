@@ -1,20 +1,33 @@
 function renderLoginForm() {
   const form = `
-    <h2>Login</h2>
-    <form id="login-form">
-      <input type="text" name="identifier" placeholder="Email or Nickname" required />
-      <input type="password" name="password" placeholder="Password" required />
-      <button type="submit">Login</button>
+  <div class="modal-dialog">
+  <span id="closeModalBtn" class="close-button">×</span>
+  <div id="loginContainer" class="form-container">
+    <h2 class="modal-title">Login</h2>
+    <form id="loginForm">
+    <label for="loginEmail">
+    Email or nickname
+    <span>*</span>
+    </label>
+      <input type="text" name="identifier" id="liginEmail" class="input-field" placeholder="Email or Nickname" maxlength="200" required />
+      <label for="liginPassword">
+      Password
+      <span>*</span>
+      </label>
+      <input type="password" id="loginPassword" class="input-field" name="password" maxlength="100" placeholder="Password" required />
+      <button type="submit" id="loginSubmit" class="submit-button disbled">Log In</button>
     </form>
     <p>Don't have an account? <a href="#" id="show-register">Register here</a></p>
     <div id="error" style="color: red;"></div>
+    </div>
+    </div>
   `;
 
   document.getElementById("app").innerHTML = form;
   document.getElementById("show-register").addEventListener("click", (e) => {
     e.preventDefault();
     renderRegisterForm();
-  });  
+  });
   // Event handler for login
   document.getElementById("login-form").addEventListener("submit", async (e) => {
     e.preventDefault();

@@ -1,4 +1,42 @@
 body {
+    font-family: Arial, sans-serif;
+    color: rgb(183, 177, 242);
     text-align: center;
-    background-color: rgb(225, 245, 233);
+    background-color: rgb(255, 220, 204);
+}
+/* 
+* {
+    margin: 0;
+    box-sizing: border-box;
+} */
+
+
+.close-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--grey-mr);
+}
+.modal-dialog {
+    background-color: var(--white);
+    width: 350px;
+    padding: 2rem;
+    border-radius: 12px;
+    text-align: center;
+    position: relative;
+    max-height: 80vh;
+    overflow-y: auto; 
+    margin-top: 60px;
+}
+.form-container {
+    transition: opacity 0.3s;
+}
+.form-container.hidden {
+    display: none;
+}
+.modal-title {
+    color: var(--title-color);
+    line-height: 1.4;
 }
