@@ -5,7 +5,7 @@ function renderLoginForm() {
   <span id="closeModalBtn" class="close-button">×</span>
   <div id="loginContainer" class="form-container">
     <h2 class="modal-title">Login</h2>
-    <form id="loginForm">
+    <form id="login-form">
     <label for="loginEmail">
     Email or nickname
     <span>*</span>
@@ -64,7 +64,7 @@ function renderRegisterForm() {
   <span id="closeModalBtn" class="close-button">×</span>
   <div id="signUpContainer" class="form-container">
     <h2 class="modal-title">Register</h2>
-    <form id="signUpForm" class="auth-from">
+    <form id="register-form" class="auth-from">
         <label for="signUpNickName">
         NickName
           <span>*</sapn>
@@ -102,7 +102,7 @@ function renderRegisterForm() {
       <input type="password" name="password" placeholder="Password" id="signUpPassword" class="input-field" required />
       <button type="submit" id="signUpSubmit" class="submit-button disabled" disabled>Register</button>
     </form>
-    <p class="switch-text">Already have an account? <a href="#" id="show-login">Login here</a></p>
+<p>Already have an account? <a href="#" id="show-login">Login here</a></p>
     <div id="error" style="color: red;"></div>
     </div>
     </div>
@@ -110,12 +110,12 @@ function renderRegisterForm() {
   `;
 
   document.getElementById("app").innerHTML = form;
-
   document.getElementById("register-form").addEventListener("submit", handleRegister);
   document.getElementById("show-login").addEventListener("click", (e) => {
     e.preventDefault();
     renderLoginForm();
   });
+
 }
 
 //ff
