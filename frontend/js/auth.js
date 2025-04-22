@@ -100,7 +100,7 @@ function renderRegisterForm() {
           <span>*</sapn>
         </label>
       <input type="password" name="password" placeholder="Password" id="signUpPassword" class="input-field" required />
-      <button type="submit" id="signUpSubmit" class="submit-button disabled" disabled>Register</button>
+      <button type="submit" id="signUpSubmit" class="submit-button disbled" disabled>Register</button>
     </form>
 <p>Already have an account? <a href="#" id="show-login">Login here</a></p>
     <div id="error" style="color: red;"></div>

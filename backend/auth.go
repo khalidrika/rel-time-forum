@@ -1,6 +1,7 @@
 package backend
 
 import (
+	"database/sql"
 	"encoding/json"
 	"net/http"
 
@@ -42,12 +43,33 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if req.Identifier == "khalid" && req.Password == "123" {
-		json.NewEncoder(w).Encode(LoginResponse{Name: "Khalid"})
+	var (
+		id       int
+		first    string
+		password string
+	)
+
+	// البحث عن المستخدم حسب البريد أو الاسم المستعار
+	row := DB.QueryRow("SELECT id, first_name, password FROM users WHERE email = ? OR nickname = ?", req.Identifier, req.Identifier)
+	err := row.Scan(&id, &first, &password)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			ErrorHandler(w, "User not found", http.StatusUnauthorized)
+			return
+		}
+		ErrorHandler(w, "Database error", http.StatusInternalServerError)
 		return
 	}
 
-	ErrorHandler(w, "Invalid credentials", http.StatusUnauthorized)
+	// التحقق من كلمة المرور
+	if err := bcrypt.CompareHashAndPassword([]byte(password), []byte(req.Password)); err != nil {
+		ErrorHandler(w, "Incorrect password", http.StatusUnauthorized)
+		return
+	}
+
+	// النجاح
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(LoginResponse{Name: first})
 }
 
 // register
