@@ -50,7 +50,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		password string
 	)
 
-	// البحث عن المستخدم حسب البريد أو الاسم المستعار
 	row := DB.QueryRow("SELECT id, first_name, password FROM users WHERE email = ? OR nickname = ?", req.Identifier, req.Identifier)
 	err := row.Scan(&id, &first, &password)
 	if err != nil {
@@ -62,13 +61,11 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// التحقق من كلمة المرور
 	if err := bcrypt.CompareHashAndPassword([]byte(password), []byte(req.Password)); err != nil {
 		ErrorHandler(w, "Incorrect password", http.StatusUnauthorized)
 		return
 	}
 
-	// النجاح
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(LoginResponse{Name: first})
 }
