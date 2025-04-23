@@ -3,6 +3,7 @@ package backend
 import (
 	"database/sql"
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"golang.org/x/crypto/bcrypt"
@@ -91,6 +92,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	err := DB.QueryRow("SELECT EXISTS (SELECT 1 FROM users WHERE nickname = ? OR email = ?)", req.Nickname, req.Email).Scan(&exists)
 	if err != nil {
 		ErrorHandler(w, "Database error", http.StatusInternalServerError)
+		log.Println("ee", err)
 		return
 	}
 	if exists {
@@ -103,7 +105,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	stmt, err := DB.Prepare(`
-	INSERT INTO users (nickname, age, gender, firstname, lastname, email, password)
+	INSERT INTO users (nickname, email, password, first_name, last_name, age, gender)
 	VALUES (?, ?, ?, ?, ?, ?, ?)
 	`)
 	if err != nil {

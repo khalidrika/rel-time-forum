@@ -38,7 +38,6 @@ function renderLoginForm() {
       identifier: formData.get("identifier"),
       password: formData.get("password")
     };
-
     const res = await fetch("/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -58,7 +57,7 @@ function renderLoginForm() {
 // Show form on page load
 window.addEventListener("DOMContentLoaded", renderLoginForm);
 function renderRegisterForm() {
-  const form = `
+  const form = `  
     <div class="modal-overlay">
   <div class="modal-dialog">
   <span id="closeModalBtn" class="close-button">×</span>
@@ -100,7 +99,7 @@ function renderRegisterForm() {
           <span>*</sapn>
         </label>
       <input type="password" name="password" placeholder="Password" id="signUpPassword" class="input-field" required />
-      <button type="submit" id="signUpSubmit" class="submit-button disbled" disabled>Register</button>
+      <button type="submit" id="signUpSubmit" class="submit-button disbled" >Register</button>
     </form>
 <p>Already have an account? <a href="#" id="show-login">Login here</a></p>
     <div id="error" style="color: red;"></div>
@@ -115,7 +114,10 @@ function renderRegisterForm() {
     e.preventDefault();
     renderLoginForm();
   });
+  document.getElementById("register-form").addEventListener("submit", async(e)=> {
+    e.preventDefault();
 
+  })
 }
 
 //ff

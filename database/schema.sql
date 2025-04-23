@@ -1,9 +1,13 @@
 CREATE TABLE
     IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nickname TEXT NOT NULL UNIQUE,
         email TEXT NOT NULL UNIQUE,
-        username TEXT NOT NULL UNIQUE,
         password TEXT NOT NULL,
+        first_name TEXT NOT NULL,
+        last_name TEXT NOT NULL,
+        age INTEGER NOT NULL,
+        gender TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 

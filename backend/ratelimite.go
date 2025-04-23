@@ -7,7 +7,7 @@ import (
 
 type RateLimiter struct {
 	visitors map[string]time.Time
-	mu       sync.Mutex
+	Mutex    sync.Mutex
 	intirval time.Duration
 }
 
