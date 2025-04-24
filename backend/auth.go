@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"time"
 
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -50,7 +52,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		password string
 	)
 
-	row := DB.QueryRow("SELECT id, first_name, password FROM users WHERE email = ? OR nickname = ?", req.Identifier, req.Identifier)
+	row := DB.QueryRow("SELECT id, nickname, password FROM users WHERE nickname = ? OR email = ?", req.Identifier, req.Identifier)
 	err := row.Scan(&id, &first, &password)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -66,11 +68,25 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	token := uuid.New().String()
+	expiresAt := time.Now().Add(24 * time.Hour)
+
+	_, err = DB.Exec("INSERT INTO sessions (user_id, token, expires_at) VALUES (?, ?, ?)", id, token, expiresAt)
+	if err != nil {
+		ErrorHandler(w, "Failed to create session", http.StatusInternalServerError)
+		return
+	}
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session_token",
+		Value:    token,
+		Expires:  expiresAt,
+		HttpOnly: true,
+		Path:     "/",
+	})
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(LoginResponse{Name: first})
 }
-
-// register
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
@@ -84,39 +100,40 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: Check if user   exists, hash password, insert into DB
 	var exists bool
 	err := DB.QueryRow("SELECT EXISTS (SELECT 1 FROM users WHERE nickname = ? OR email = ?)", req.Nickname, req.Email).Scan(&exists)
 	if err != nil {
 		ErrorHandler(w, "Database error", http.StatusInternalServerError)
-		log.Println("ee", err)
+		log.Println("db check error:", err)
 		return
 	}
 	if exists {
-		ErrorHandler(w, "User alredy", http.StatusConflict)
+		ErrorHandler(w, "User already exists", http.StatusConflict)
 		return
 	}
+
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
-		ErrorHandler(w, "password encryption error", http.StatusInternalServerError)
+		ErrorHandler(w, "Password encryption error", http.StatusInternalServerError)
 		return
 	}
+
 	stmt, err := DB.Prepare(`
-	INSERT INTO users (nickname, email, password, first_name, last_name, age, gender)
-	VALUES (?, ?, ?, ?, ?, ?, ?)
+		INSERT INTO users (nickname, email, password, first_name, last_name, age, gender)
+		VALUES (?, ?, ?, ?, ?, ?, ?)
 	`)
 	if err != nil {
 		ErrorHandler(w, "Database prepare failed", http.StatusInternalServerError)
 		return
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(req.Nickname, req.Age, req.Gender, req.FirstName, req.LastName, req.Email, string(hashedPassword))
+
+	_, err = stmt.Exec(req.Nickname, req.Email, string(hashedPassword), req.FirstName, req.LastName, req.Age, req.Gender)
 	if err != nil {
-		ErrorHandler(w, "User registeration failed", http.StatusInternalServerError)
+		ErrorHandler(w, "User registration failed", http.StatusInternalServerError)
 		return
 	}
+
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(RegisterResponse{
-		Nickname: req.Nickname,
-	})
+	json.NewEncoder(w).Encode(RegisterResponse{Nickname: req.Nickname})
 }
