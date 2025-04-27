@@ -11,19 +11,23 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// login
 type LoginRequest struct {
 	Identifier string `json:"identifier"`
 	Password   string `json:"password"`
 }
 
+// name for welcome
 type LoginResponse struct {
 	Name string `json:"name"`
 }
 
+// regester response
 type RegisterResponse struct {
 	Nickname string `json:"nickname"`
 }
 
+// regester requrst
 type RegisterRequest struct {
 	Nickname  string `json:"nickname"`
 	Age       int    `json:"age"`
@@ -34,6 +38,18 @@ type RegisterRequest struct {
 	Password  string `json:"password"`
 }
 
+// me response
+type MeResponse struct {
+	ID        int    `json:"id"`
+	Nickname  string `json:"nickname"`
+	Email     string `json:"email"`
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+	Age       int    `json:"age"`
+	Gender    string `json:"Gender"`
+}
+
+// login
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		ErrorHandler(w, "Method Not Allowed", http.StatusMethodNotAllowed)
@@ -136,4 +152,36 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(RegisterResponse{Nickname: req.Nickname})
+}
+
+func MeHandler(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("session_token")
+	if err != nil {
+		ErrorHandler(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+	var userID int
+	err = DB.QueryRow(`
+	SELECT user_id FROM sessions
+	WHERE token = ? AND expires_at > datetime('now')
+	`, cookie.Value).Scan(&userID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			ErrorHandler(w, "Session expired or invalid", http.StatusUnauthorized)
+			return
+		}
+		ErrorHandler(w, "database error", http.StatusInternalServerError)
+		return
+	}
+	var user MeResponse
+	err = DB.QueryRow(`
+	SELECT id, nickname, email, first_name, last_name, age, gender
+	FROM users WHERE id = ?
+	`, userID).Scan(&user.ID, &user.Nickname, &user.Email, &user.FirstName, &user.LastName, &user.Age, &user.Gender)
+	if err != nil {
+		ErrorHandler(w, "User not found", http.StatusNotFound)
+		return
+	}
+	w.Header().Set("Content-type", "application/json")
+	json.NewEncoder(w).Encode(user)
 }
