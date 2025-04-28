@@ -185,3 +185,33 @@ func MeHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-type", "application/json")
 	json.NewEncoder(w).Encode(user)
 }
+
+func LogoutHandler(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("session_token")
+	if err != nil {
+		ErrorHandler(w, "Unauthrized", http.StatusUnauthorized)
+		return
+	}
+
+	res, err := DB.Exec("DELET FROM session WHERE token = ?", cookie.Value)
+	if err != nil {
+		ErrorHandler(w, "Failder To Delete session", http.StatusInternalServerError)
+		return
+	}
+
+	RowsAffected, err := res.RowsAffected()
+	if err != nil || RowsAffected == 0 {
+		ErrorHandler(w, "session not found", http.StatusNotFound)
+		return
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session_token",
+		Value:    "",
+		Expires:  time.Unix(0, 0),
+		HttpOnly: true,
+		Path:     "/",
+	})
+
+	w.WriteHeader(http.StatusOK)
+}
