@@ -2,7 +2,6 @@ function renderLoginForm() {
   const form = `
   <div class="modal-overlay">
   <div class="modal-dialog">
-  <span id="closeModalBtn" class="close-button">×</span>
   <div id="loginContainer" class="form-container">
     <h2 class="modal-title">Login</h2>
     <form id="login-form">
@@ -50,7 +49,9 @@ function renderLoginForm() {
       return;
     }
 
-    alert("Login successful! Welcome " + data.name);
+    // alert("Login successful! Welcome " + data.name);
+    document.getElementById("app").innerHTML = ""
+    fetchUserProfile();
   });
 }
 
@@ -60,7 +61,6 @@ function renderRegisterForm() {
   const form = `  
     <div class="modal-overlay">
   <div class="modal-dialog">
-  <span id="closeModalBtn" class="close-button">×</span>
   <div id="signUpContainer" class="form-container">
     <h2 class="modal-title">Register</h2>
     <form id="register-form" class="auth-from">
@@ -149,3 +149,33 @@ async function handleRegister(e) {
   alert("Registration successful! Welcome " + data.nickname);
   renderLoginForm(); // redirect to login
 }
+
+async function logout() {
+  const res = await fetch('/api/logout', {method: 'POST' });
+  if (res.ok) {
+    alert('Logged out successfully!');
+    window.location.reload();
+  }else {
+    alert('Failde to logout.');
+  }
+}
+
+async function fetchUserProfile() {
+  const res = await fetch("/api/me", {
+    method: "GET",
+    credentials: "include",
+  });
+  if (!res.ok) {
+    console.log("Not logged in");
+    return;
+  }
+  const user = await res.json();
+  document.getElementById("app").innerHTML = `
+    <h2 class="me">Welcome, ${user.nickname}!</h2>
+    <p class="me">Email: ${user.email}</p>
+    <p class="me">Name: ${user.firstName} ${user.lastName}</p>
+    <button class="submit-button disbled" onclick="logout()">Logout</button>
+  `;
+}
+
+window.logout = logout;

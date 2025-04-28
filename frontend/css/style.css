@@ -3,13 +3,18 @@ body {
     text-align: center;
 }
 
-.close-button {
+/* .close-button {
     position: absolute;
     top: 1rem;
     right: 1rem;
     font-size: 1.5rem;
     cursor: pointer;
     color: var(--grey-mr);
+} */
+#me{
+     font-family: 'Courier New', Courier, monospace;
+     text-shadow: #0079d3;
+     color: brown;
 }
 .modal-overlay {
     position: fixed;
@@ -39,14 +44,7 @@ body {
 .form-container.hidden {
     display: none;
 }
-.close-button {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: var(--grey-mr);
-}
+
 .modal-title {
     color: var(--title-color);
     line-height: 1.4;

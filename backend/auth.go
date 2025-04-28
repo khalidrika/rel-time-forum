@@ -98,6 +98,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		Expires:  expiresAt,
 		HttpOnly: true,
 		Path:     "/",
+		Secure:   false,
+		SameSite: http.SameSiteLaxMode,
 	})
 
 	w.Header().Set("Content-Type", "application/json")
@@ -189,19 +191,19 @@ func MeHandler(w http.ResponseWriter, r *http.Request) {
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("session_token")
 	if err != nil {
-		ErrorHandler(w, "Unauthrized", http.StatusUnauthorized)
+		ErrorHandler(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
 
-	res, err := DB.Exec("DELET FROM session WHERE token = ?", cookie.Value)
+	res, err := DB.Exec("DELETE FROM sessions WHERE token = ?", cookie.Value)
 	if err != nil {
-		ErrorHandler(w, "Failder To Delete session", http.StatusInternalServerError)
+		ErrorHandler(w, "Failed to delete session", http.StatusInternalServerError)
 		return
 	}
 
-	RowsAffected, err := res.RowsAffected()
-	if err != nil || RowsAffected == 0 {
-		ErrorHandler(w, "session not found", http.StatusNotFound)
+	rowsAffected, err := res.RowsAffected()
+	if err != nil || rowsAffected == 0 {
+		ErrorHandler(w, "Session not found", http.StatusUnauthorized)
 		return
 	}
 

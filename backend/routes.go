@@ -14,5 +14,7 @@ func Routes() http.Handler {
 	mux.HandleFunc("/api/home-content", HomeContentHandler)
 	mux.HandleFunc("/api/login", LoginHandler)
 	mux.HandleFunc("/api/register", RegisterHandler)
+	mux.HandleFunc("/api/logout", LogoutHandler)
+	mux.HandleFunc("/api/me", MeHandler)
 	return mux
 }
