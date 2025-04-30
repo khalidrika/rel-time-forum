@@ -57,6 +57,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var req LoginRequest
+
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		ErrorHandler(w, "Invalid request", http.StatusBadRequest)
 		return
@@ -68,7 +69,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		password string
 	)
 
-	row := DB.QueryRow("SELECT id, nickname, password FROM users WHERE nickname = ? OR email = ?", req.Identifier, req.Identifier)
+	row := DB.QueryRow("SELECT id, nickname, password FROM users WHERE nickname = ? OR email = ? AND password = ?", req.Identifier, req.Identifier, req.Password)
 	err := row.Scan(&id, &first, &password)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -96,10 +97,11 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		Name:     "session_token",
 		Value:    token,
 		Expires:  expiresAt,
-		HttpOnly: true,
+		HttpOnly: true, // XSS
 		Path:     "/",
 		Secure:   false,
-		SameSite: http.SameSiteLaxMode,
+		SameSite: http.SameSiteLaxMode, // CSRF
+		
 	})
 
 	w.Header().Set("Content-Type", "application/json")
@@ -113,12 +115,14 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var req RegisterRequest
+
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		ErrorHandler(w, "Invalid request", http.StatusBadRequest)
 		return
 	}
 
 	var exists bool
+
 	err := DB.QueryRow("SELECT EXISTS (SELECT 1 FROM users WHERE nickname = ? OR email = ?)", req.Nickname, req.Email).Scan(&exists)
 	if err != nil {
 		ErrorHandler(w, "Database error", http.StatusInternalServerError)
@@ -213,6 +217,7 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 		Expires:  time.Unix(0, 0),
 		HttpOnly: true,
 		Path:     "/",
+		MaxAge: -1,
 	})
 
 	w.WriteHeader(http.StatusOK)

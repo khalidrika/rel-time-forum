@@ -29,6 +29,7 @@ func Server(handler http.Handler) error {
 		return err
 	}
 	defer listener.Close()
+
 	server := &http.Server{
 		Handler:      handler,
 		ReadTimeout:  5 * time.Second,

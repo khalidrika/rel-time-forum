@@ -11,7 +11,7 @@ func Routes() http.Handler {
 	mux.Handle("/frontend/", http.StripPrefix("/frontend/", fs))
 
 	mux.HandleFunc("/", HomeHandler)
-	mux.HandleFunc("/api/home-content", HomeContentHandler)
+	// mux.HandleFunc("/api/home-content", HomeContentHandler)
 	mux.HandleFunc("/api/login", LoginHandler)
 	mux.HandleFunc("/api/register", RegisterHandler)
 	mux.HandleFunc("/api/logout", LogoutHandler)
@@ -19,4 +19,3 @@ func Routes() http.Handler {
 	mux.HandleFunc("/api/posts", GetPostsHAndler)
 	return mux
 }
-

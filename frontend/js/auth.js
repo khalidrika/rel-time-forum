@@ -1,3 +1,5 @@
+import { navigate } from "./routes.js";
+
 function renderLoginForm() {
   const form = `
   <div class="modal-overlay">
@@ -45,9 +47,13 @@ function renderLoginForm() {
 
     const data = await res.json();
     if (!res.ok) {
+      console.log("WWWWWWW");
       document.getElementById("error").textContent = data.error || "Login failed";
+      
       return;
     }
+
+    navigate("/home")
 
     // alert("Login successful! Welcome " + data.name);
     document.getElementById("app").innerHTML = ""
@@ -134,7 +140,7 @@ async function handleRegister(e) {
     password: formData.get("password")
   };
 
-  const res = await fetch("/api/register", {
+  const res = await fetch("c", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
