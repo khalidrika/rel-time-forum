@@ -6,4 +6,4 @@ async function logout() {
   }else {
     alert('Failde to logout.');
   }
-}
+} 

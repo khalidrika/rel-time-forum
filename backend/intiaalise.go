@@ -19,7 +19,7 @@ type Links struct {
 	ErrorPage string `json:"error"`
 }
 
-func Initialise(){
+func Initialise() {
 	InitialiseLinks()
 	InitialiseDB()
 }
@@ -47,11 +47,11 @@ func InitialiseDB() {
 	DB.SetMaxOpenConns(10)
 	DB.SetConnMaxIdleTime(5 * time.Minute)
 
-	constant, err := os.ReadFile("./database/schema.sql")
+	schema, err := os.ReadFile("./database/schema.sql")
 	if err != nil {
 		log.Fatalf("failed to get database tables: %v", err)
 	}
-	if _, err := DB.Exec(string(constant)); err != nil {
+	if _, err := DB.Exec(string(schema)); err != nil {
 		log.Fatalf("failed to create database tables: %v", err)
 	}
 }
