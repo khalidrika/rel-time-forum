@@ -3,14 +3,6 @@ body {
     text-align: center;
 }
 
-/* .close-button {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: var(--grey-mr);
-} */
 #me{
      font-family: 'Courier New', Courier, monospace;
      text-shadow: #0079d3;
@@ -134,7 +126,7 @@ body {
     /* background-attachment: fixed; */
 }
 :root {
-    --body-bg: rgb(75, 89, 69);
+    --body-bg: rgb(124, 139, 117);
     --body-bg2: #e5edff;
     --light-blue: #83dafd;
     --title-color: rgb(75, 89, 69);

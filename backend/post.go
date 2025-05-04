@@ -15,11 +15,11 @@ type Post struct {
 }
 
 type CreatePostRequest struct {
-	Title   string `json:"titile"`
+	Title   string `json:"title"`
 	Content string `json:"content"`
 }
 
-func GetPostsHAndler(w http.ResponseWriter, r *http.Request) {
+func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
 	rows, err := DB.Query(`
 	SELECT id, user_id, title, content, created_at
 	FROM posts
@@ -46,7 +46,39 @@ func GetPostsHAndler(w http.ResponseWriter, r *http.Request) {
 
 func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		ErrorHandler(w, "Method NOt allowed", http.StatusMethodNotAllowed)
+		ErrorHandler(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
+
+	userID, err := GetUserIDFromRequest(r)
+	if err != nil {
+		ErrorHandler(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	var req CreatePostRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		ErrorHandler(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+	if req.Title == "" || req.Content == "" {
+		ErrorHandler(w, "Title and content required", http.StatusBadRequest)
+		return
+	}
+
+	stmt, err := DB.Prepare("INSERT INTO posts (user_id, title, content, created_at) VALUES (?, ?, ?, ?)")
+	if err != nil {
+		ErrorHandler(w, "Failed to prepare statement", http.StatusInternalServerError)
+		return
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(userID, req.Title, req.Content, time.Now())
+	if err != nil {
+		ErrorHandler(w, "Failed to insert post", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	w.Write([]byte(`{"message": "Post created successfully"}`))
 }

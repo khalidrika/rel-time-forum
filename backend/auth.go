@@ -46,7 +46,7 @@ type MeResponse struct {
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
 	Age       int    `json:"age"`
-	Gender    string `json:"Gender"`
+	Gender    string `json:"gender"`
 }
 
 // login
@@ -69,7 +69,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		password string
 	)
 
-	row := DB.QueryRow("SELECT id, nickname, password FROM users WHERE nickname = ? OR email = ? AND password = ?", req.Identifier, req.Identifier, req.Password)
+	row := DB.QueryRow("SELECT id, nickname, password FROM users WHERE nickname = ? OR email = ?", req.Identifier, req.Identifier)
 	err := row.Scan(&id, &first, &password)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -99,9 +99,9 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		Expires:  expiresAt,
 		HttpOnly: true, // XSS
 		Path:     "/",
-		Secure:   false,
+		Secure:   true,
 		SameSite: http.SameSiteLaxMode, // CSRF
-		
+
 	})
 
 	w.Header().Set("Content-Type", "application/json")
@@ -217,7 +217,7 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 		Expires:  time.Unix(0, 0),
 		HttpOnly: true,
 		Path:     "/",
-		MaxAge: -1,
+		MaxAge:   -1,
 	})
 
 	w.WriteHeader(http.StatusOK)

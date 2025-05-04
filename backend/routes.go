@@ -16,11 +16,11 @@ func Routes() http.Handler {
 	mux.HandleFunc("/api/register", RegisterHandler)
 	mux.HandleFunc("/api/logout", LogoutHandler)
 	mux.HandleFunc("/api/me", MeHandler)
-	mux.HandleFunc("/api/posts", GetPostsHAndler)
+	mux.HandleFunc("/api/posts", GetPostsHandler)
 	mux.HandleFunc("/api/create-post", CreatePostHandler)
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		validePath := map[string]bool{
-			"/": true, "/login": true, "register": true, "home": true,
+			"/": true, "/login": true, "/register": true, "/home": true,
 		}
 		if !validePath[r.URL.Path] {
 			ErrorHandler(w, "page not found", http.StatusNotFound)
