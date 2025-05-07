@@ -222,3 +222,37 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 }
+
+func getAuthenticatedUserID(r *http.Request) int {
+	// Example: Retrieve user ID from a session cookie or token
+	cookie, err := r.Cookie("session_token")
+	if err != nil {
+		log.Printf("Error retrieving session cookie: %v", err)
+		return 0 // Return 0 if the user is not authenticated
+	}
+
+	// Validate the session token and retrieve the user ID
+	userID, err := validateSessionToken(cookie.Value)
+	if err != nil {
+		log.Printf("Invalid session token: %v", err)
+		return 0 // Return 0 if the session token is invalid
+	}
+
+	return userID
+}
+
+func validateSessionToken(token string) (int, error) {
+	// Example: Validate the session token and retrieve the user ID
+	// Replace this with your actual session/token validation logic
+	var userID int
+	err := DB.QueryRow(`
+        SELECT user_id 
+        FROM sessions 
+        WHERE token = ? AND expires_at > CURRENT_TIMESTAMP
+    `, token).Scan(&userID)
+	if err != nil {
+		return 0, err
+	}
+
+	return userID, nil
+}

@@ -12,7 +12,7 @@ CREATE TABLE
     );
 
 CREATE TABLE
-    IF NOT EXISTS sessions (
+    IF NOT EXISTS ses (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL,
         token TEXT NOT NULL UNIQUE,
@@ -90,3 +90,19 @@ WHERE
     expires_at < DATETIME ('now');
 
 END;
+
+CREATE TABLE IF NOT EXISTS messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sender_id INTEGER NOT NULL,
+    receiver_id INTEGER NOT NULL,
+    content TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(sender_id) REFERENCES users(id),
+    FOREIGN KEY(receiver_id) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS user_status (
+    user_id INTEGER PRIMARY KEY,
+    online BOOLEAN DEFAULT 0,
+    last_seen DATETIME
+);
