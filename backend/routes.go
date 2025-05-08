@@ -10,14 +10,14 @@ func Routes() http.Handler {
 	fs := http.FileServer(http.Dir("./frontend"))
 	mux.Handle("/frontend/", http.StripPrefix("/frontend/", fs))
 
-	// mux.HandleFunc("/", HomeHandler)
-	// mux.HandleFunc("/api/home-content", HomeContentHandler)
 	mux.HandleFunc("/api/login", LoginHandler)
 	mux.HandleFunc("/api/register", RegisterHandler)
 	mux.HandleFunc("/api/logout", LogoutHandler)
 	mux.HandleFunc("/api/me", MeHandler)
 	mux.HandleFunc("/api/posts", GetPostsHandler)
 	mux.HandleFunc("/api/create-post", CreatePostHandler)
+	mux.HandleFunc("/api/comments", GetCommentHandler)
+	mux.HandleFunc("/api/add-comment", AddCommentHandler)
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		validePath := map[string]bool{
 			"/": true, "/login": true, "/register": true, "/home": true,

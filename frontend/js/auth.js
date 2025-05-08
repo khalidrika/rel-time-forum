@@ -1,5 +1,5 @@
 import { navigate } from "./routes.js";
-
+import { renderPosts } from "./post.js";
 function renderLoginForm() {
   const form = `
   <div class="modal-overlay">
@@ -49,7 +49,7 @@ function renderLoginForm() {
     if (!res.ok) {
       console.log("WWWWWWW");
       document.getElementById("error").textContent = data.error || "Login failed";
-      
+
       return;
     }
 
@@ -57,7 +57,7 @@ function renderLoginForm() {
 
     // alert("Login successful! Welcome " + data.name);
     document.getElementById("app").innerHTML = ""
-    fetchUserProfile();
+    renderPosts();
   });
 }
 
@@ -120,7 +120,7 @@ function renderRegisterForm() {
     e.preventDefault();
     renderLoginForm();
   });
-  document.getElementById("register-form").addEventListener("submit", async(e)=> {
+  document.getElementById("register-form").addEventListener("submit", async (e) => {
     e.preventDefault();
 
   })
@@ -157,31 +157,11 @@ async function handleRegister(e) {
 }
 
 async function logout() {
-  const res = await fetch('/api/logout', {method: 'POST' });
+  const res = await fetch('/api/logout', { method: 'POST' });
   if (res.ok) {
     alert('Logged out successfully!');
     window.location.reload();
-  }else {
+  } else {
     alert('Failde to logout.');
   }
 }
-
-async function fetchUserProfile() {
-  const res = await fetch("/api/me", {
-    method: "GET",
-    credentials: "include",
-  });
-  if (!res.ok) {
-    console.log("Not logged in");
-    return;
-  }
-  const user = await res.json();
-  document.getElementById("app").innerHTML = `
-    <h2 class="me">Welcome, ${user.nickname}!</h2>
-    <p class="me">Email: ${user.email}</p>
-    <p class="me">Name: ${user.firstName} ${user.lastName}</p>
-    <button class="submit-button disbled" onclick="logout()">Logout</button>
-  `;
-}
-
-window.logout = logout;
