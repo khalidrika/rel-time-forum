@@ -24,6 +24,6 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 		fmt.Println(message_type, string(pyload))
-
+		conn.WriteMessage(message_type, pyload)
 	}
 }
