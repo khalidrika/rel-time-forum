@@ -1,5 +1,6 @@
-import { navigate, renderPage } from "./routes.js";
+import { navigate } from "./routes.js";
 import { renderPosts } from "./post.js";
+import { socket } from "./ws.js";
 export function renderLoginForm() {
   const form = `
   <div class="modal-overlay">
@@ -29,7 +30,8 @@ export function renderLoginForm() {
   document.getElementById("app").innerHTML = form;
   document.getElementById("show-register").addEventListener("click", (e) => {
     e.preventDefault();
-    renderRegisterForm();
+    navigate("/register")
+    // renderRegisterForm();
   });
   // Event handler for login
   document.getElementById("login-form").addEventListener("submit", async (e) => {
@@ -117,7 +119,8 @@ export function renderRegisterForm() {
   document.getElementById("register-form").addEventListener("submit", handleRegister);
   document.getElementById("show-login").addEventListener("click", (e) => {
     e.preventDefault();
-    renderLoginForm();
+    navigate("/login")
+    // renderLoginForm();
   });
   document.getElementById("register-form").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -155,11 +158,13 @@ async function handleRegister(e) {
   renderLoginForm(); // redirect to login
 }
 
-async function logout() {
+export async function logout() {
   const res = await fetch('/api/logout', { method: 'POST' });
   if (res.ok) {
-    alert('Logged out successfully!');
-    window.location.reload();
+    // alert('Logged out successfully!');
+    // window.location.reload();
+    navigate("/login");
+    socket.close()
   } else {
     alert('Failde to logout.');
   }

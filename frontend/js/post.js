@@ -1,4 +1,5 @@
 import { UpgredConnetion } from "./ws.js";
+import { logout } from "./auth.js";
 
 export async function showPostWithComments(postId) {
   const res = await fetch(`/api/comments?postId=${postId}`);
@@ -77,12 +78,18 @@ export async function renderPosts() {
         <h3>${post.title}</h3>
         <p>${post.content}</p>
         <button onclick="showPostWithComments(${post.id})">View Comments</button>
-      </div>
+        </div>
     `).join('');
 
   document.getElementById("app").innerHTML = `
       <h2>Posts Feed</h2>
       ${postsHTML}
-      <button class="submit-button" onclick="logout()">Logout</button>
+      <button class="submit-button" id="logout">Logout</button>
     `;
+    const logoutbtn = document.getElementById("logout")
+    if (logoutbtn) {
+      logoutbtn.addEventListener('click', () => {
+        logout();
+      })
+    }
 }

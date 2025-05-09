@@ -6,7 +6,9 @@ import (
 )
 
 func ErrorHandler(w http.ResponseWriter, message string, statusCode int) {
-	w.WriteHeader(statusCode)
-	w.Header().Set("Content-Type", "application/json")
+	if statusCode != http.StatusOK {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(statusCode)
+	}
 	fmt.Fprintf(w, `{"error": "%s", "status": %d}`, message, statusCode)
 }
