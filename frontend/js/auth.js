@@ -1,6 +1,6 @@
-import { navigate } from "./routes.js";
+import { navigate, renderPage } from "./routes.js";
 import { renderPosts } from "./post.js";
-function renderLoginForm() {
+export function renderLoginForm() {
   const form = `
   <div class="modal-overlay">
   <div class="modal-dialog">
@@ -62,8 +62,7 @@ function renderLoginForm() {
 }
 
 // Show form on page load
-window.addEventListener("DOMContentLoaded", renderLoginForm);
-function renderRegisterForm() {
+export function renderRegisterForm() {
   const form = `  
     <div class="modal-overlay">
   <div class="modal-dialog">

@@ -2,6 +2,7 @@ package backend
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 )
@@ -45,17 +46,18 @@ func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("heeey")
 	if r.Method != http.MethodPost {
 		ErrorHandler(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
 	userID, err := GetUserIDFromRequest(r)
-	if err != nil {
-		ErrorHandler(w, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
-
+	// if err != nil {
+	// 	ErrorHandler(w, "Unauthorized", http.StatusUnauthorized)
+	// 	return
+	// }
+	userID = 1
 	var req CreatePostRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		ErrorHandler(w, "Invalid request body", http.StatusBadRequest)
