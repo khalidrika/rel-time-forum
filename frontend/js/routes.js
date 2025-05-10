@@ -1,5 +1,5 @@
 import { renderLoginForm, renderRegisterForm } from "./auth.js";
-import { renderPosts } from "./post.js";
+import { creatpostform, renderPosts } from "./post.js";
 import { socketEvent, UpgredConnetion } from "./ws.js";
 
 let routes = {};
@@ -11,6 +11,7 @@ window.addEventListener("DOMContentLoaded", () => {
     '/home': async () => {
       try {
         await renderPosts();
+        // creatpostform();
         UpgredConnetion();
         socketEvent();
       } catch (error) {
