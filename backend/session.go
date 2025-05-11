@@ -46,3 +46,12 @@ func GetUserIDFromQuery(r *http.Request) (int, error) {
 	}
 	return id, nil
 }
+
+func GetNicknameById(id int) (string, error) {
+	var nickname string
+	err := DB.QueryRow(`
+	SELECT nickname FROM users
+	WHERE id = ? 
+	`, id).Scan(&nickname)
+	return nickname, err
+}
