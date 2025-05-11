@@ -44,7 +44,7 @@ export function createNewPostModal() {
   contentTextarea.id = "formPostContent";
   contentTextarea.className = "post-textarea";
   contentTextarea.rows = 6;
-  contentTextarea.placeholder = "Share your thoughts (dwi)...";
+  contentTextarea.placeholder = "Share your thoughts (gol xi haja)...";
   contentTextarea.maxLength = 8000;
   contentTextarea.required = true;
 
@@ -201,7 +201,7 @@ app.append(addButton);
 
 const logoutButton = document.createElement("button");
 logoutButton.id = "logout";
-logoutButton.className = "submit-button";
+logoutButton.className = "submit-logot";
 logoutButton.textContent = "Logout";
 app.append(logoutButton);
 
