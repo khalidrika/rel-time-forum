@@ -16,21 +16,10 @@ func Routes() http.Handler {
 	mux.HandleFunc("/api/me", MeHandler)
 	mux.HandleFunc("/api/posts", GetPostsHandler)
 	mux.HandleFunc("/api/create-post", CreatePostHandler)
-	mux.HandleFunc("/api/comments", GetCommentHandler)
-	mux.HandleFunc("/api/add-comment", AddCommentHandler)
+	mux.HandleFunc("/api/comments", GetCommentsHandler)      
+	mux.HandleFunc("/api/add-comment", CreateCommentHandler) 
 	mux.HandleFunc("/", HomeHandler)
 	mux.HandleFunc("/ws", ChatHandler)
 
 	return mux
 }
-
-/* func(w http.ResponseWriter, r *http.Request) {
-	validePath := map[string]bool{
-		"/": true, "/login": true, "/register": true, "/home": true,
-	}
-	if !validePath[r.URL.Path] {
-		ErrorHandler(w, "page not found", http.StatusNotFound)
-		return
-	}
-	http.ServeFile(w, r, "./frontend/html/index.html")
-} */

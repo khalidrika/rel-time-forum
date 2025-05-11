@@ -1,15 +1,10 @@
-import { UpgredConnetion } from "./ws.js";
 import { logout } from "./auth.js";
 
-export async function addpost() {
-
-}
-
 export function creatpostform() {
-
+// Drawing for adding a post
   document.getElementById("app").innerHTML += `
   <!-- New Post Modal -->
-<div id="newPostModal" class="modal">
+<div id="newPostModal" class="modal hidden">
     <div class="post-dialog">
         <span id="closeNewPostModal" class="close-button">&times;</span>
         <h2>Create New Post</h2>
@@ -38,41 +33,69 @@ export function creatpostform() {
 </div>
   `
 }
+///
+
+//// subbmit post
+export async function addpost() {
+  const addpostform = document.getElementById("newPostForm")
+  addpostform.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const title = document.getElementById("formPostTitle").value.trim();
+    const content = document.getElementById("formPostContent").value.trim();
+
+    const payload = { title, content };
+
+    console.log("Sending payload:", JSON.stringify(payload));
+
+    const res = await fetch(`/api/create-post`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    if (res.ok) {
+      console.log("Post created successfully");
+      document.getElementById("newPostModal").classList.add("hidden");
+      renderPosts();
+    } else {
+      console.error("Failed to create post");
+    }
+  });
+}
+////
+
 export async function showPostWithComments(postId) {
   const res = await fetch(`/api/comments?postId=${postId}`);
   const comments = await res.json();
 
-  let commentHTML = comments.map(c => `
-      <div class="comUpgredConnetionment">
-        <strong>${c.nickname}</strong> - ${new Date(c.created_at).toLocaleString()}<br>
-        <p>${c.content}</p>
-      </div>
-    `).join('');
+  const commentHTML = comments.length > 0
+    ? comments.map(c => `
+        <div class="comment">
+          <p><strong>${c.nickname}</strong> - <em>${new Date(c.createdAt).toLocaleString()}</em></p>
+          <p>${c.content}</p>
+        </div>
+      `).join('')
+    : `<p>No comments here</p>`;
 
   const commentForm = `
-      <form id="comment-form">
-        <textarea name="content" placeholder="Write a comment..." required></textarea>
-        <button type="submit">Send</button>
-      </form>
-    `;
+    <form id="comment-form">
+      <textarea name="content" placeholder="Write a comment..." required></textarea>
+      <button type="submit">Send</button>
+    </form>
+    <button id="back-to-posts">Back to Posts</button>
+  `;
 
   document.getElementById("app").innerHTML = `
-      <h2>Post #${postId}</h2>
-      <div    const res = await fetch("/api/posts", {
-      method: "GET",
-      credentials: "include"
-    });
-   id="comments">${commentHTML}</div>
-      ${commentForm}
-      <button onclick="fetchUserProfile()">Back</button>
-    `;
+    <h2>Comments for Post #${postId}</h2>
+    <div id="comments">${commentHTML}</div>
+    ${commentForm}
+  `;
 
   document.getElementById("comment-form").addEventListener("submit", async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const payload = {
-      content: formData.get("content")
-    };
+    const payload = { content: formData.get("content") };
+
     const addRes = await fetch(`/api/add-comment?postId=${postId}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -80,13 +103,18 @@ export async function showPostWithComments(postId) {
     });
 
     if (addRes.ok) {
-      showPostWithComments(postId); // reload
+      showPostWithComments(postId);  
     } else {
       const err = await addRes.json();
       alert("Failed: " + err.error);
     }
   });
+
+  document.getElementById("back-to-posts").addEventListener("click", () => {
+    renderPosts();
+  });
 }
+
 
 // add post
 function AddPostListener() {
@@ -96,20 +124,14 @@ function AddPostListener() {
   console.log(document.getElementById("newPostModal"));
 
   fabAddPost?.addEventListener("click", () => {
-    console.log("HA HYA");
     document.getElementById("newPostModal").classList.remove("hidden");
-  });
 
-  // Create post in dropDown menu.
-  document.getElementById("createPost")?.addEventListener("click", (e) => {
-    e.preventDefault()
-    document.getElementById("newPostModal")?.classList.remove("hidden");
   });
 }
 
-
+// add post form and get posts from   database
 export async function renderPosts() {
-  // UpgredConnetion();
+  console.log("renderPosts is called");
   const res = await fetch("/api/posts", {
     method: "GET",
     credentials: "include"
@@ -129,30 +151,47 @@ export async function renderPosts() {
   }
 
   const postsHTML = posts.map(post => `
-      <div class="post">
-        <h3>${post.title}</h3>
-        <p>${post.content}</p>
-        <button onclick="showPostWithComments(${post.id})">View Comments</button>
-        </div>
-    `).join('');
+    <div class="post" id="post-${post.id}">
+      <h3>${post.title}</h3>
+      <p><strong>By:</strong> ${post.nickname} | <em>${new Date(post.createdAt).toLocaleString()}</em></p>
+      <p>${post.content}</p>
+      <button class="view-comments-btn" data-post-id="${post.id}">Show Comments</button>
+    </div>
+  `).join('');
 
   document.getElementById("app").innerHTML = `
-  <h2>Posts Feed</h2>
-  ${postsHTML}
-  <button id="fabAddPost" class="fab">+</button>
-      <button class="submit-button" id="logout">Logout</button>
-    `;
-  const fabAddPost = document.getElementById("fabAddPost");
-  console.log(fabAddPost, document.getElementById("newPostModal"));
+    <h2>Posts Feed</h2>
+    <button id="fabAddPost" class="fab">+</button>
+    ${postsHTML}
+    <button class="submit-button" id="logout">Logout</button>
+  `;
 
-  fabAddPost.addEventListener("click", () => {
-    console.log("HA HYA");
-    creatpostform();
+  const buttons = (document.querySelectorAll(".view-comments-btn"));  
+  buttons.forEach((btn) => {
+    console.log("hh", btn.dataset.postId);
+    
+    btn.addEventListener('click', () => {
+      const postId = btn.dataset.postId;
+      console.log("Clicked on post:", postId);  
+      showPostWithComments(postId);  
+    });
   });
-  const logoutbtn = document.getElementById("logout")
-  if (logoutbtn) {
-    logoutbtn.addEventListener('click', () => {
-      logout();
-    })
-  }
+  const postt = document.querySelectorAll(".post")
+  console.log("00", postt[0]);
+  postt[0].addEventListener('click',()=>{
+    console.log("yassir");
+    
+  })
+  
+  creatpostform();
+  AddPostListener();
+  addpost();
+
+  const hiddencole = document.getElementById("closeNewPostModal");
+  hiddencole?.addEventListener('click', () => {
+    document.getElementById("newPostModal").classList.add("hidden");
+  });
+
+  const logoutbtn = document.getElementById("logout");
+  logoutbtn?.addEventListener('click', logout);
 }

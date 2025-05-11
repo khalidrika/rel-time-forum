@@ -25,8 +25,4 @@ export function socketEvent() {
     socket.onclose = () => {
         socket = null
     };
-    // socket.send(JSON.stringify({
-    //     type: "message",
-    //     content: "heloo zaki"
-    // }))
 }
