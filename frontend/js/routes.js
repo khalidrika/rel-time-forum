@@ -1,5 +1,5 @@
 import { renderLoginForm, renderRegisterForm } from "./auth.js";
-import { creatpostform, renderPosts } from "./post.js";
+import { renderPosts } from "./post.js";
 import { socketEvent, UpgredConnetion } from "./ws.js";
 
 let routes = {};

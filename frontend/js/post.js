@@ -1,39 +1,73 @@
 import { logout } from "./auth.js";
 
-export function creatpostform() {
-// Drawing for adding a post
-  document.getElementById("app").innerHTML += `
-  <!-- New Post Modal -->
-<div id="newPostModal" class="modal hidden">
-    <div class="post-dialog">
-        <span id="closeNewPostModal" class="close-button">&times;</span>
-        <h2>Create New Post</h2>
-        <form id="newPostForm" class="post-form">
-            <label for="formPostTitle" class="post-label">Title</label>
-            <input
-                type="text"
-                id="formPostTitle"
-                class="post-input"
-                placeholder="Enter a descriptive title..."
-                maxlength="500"
-                minlength="4"
-                required />
 
-            <label for="formPostContent" class="post-label">Content</label>
-            <textarea
-                id="formPostContent"
-                class="post-textarea"
-                rows="6"
-                placeholder="Share your thoughts (dwi)..."
-                maxlength="8000"
-                required></textarea>
-            <button type="submit" class="post-submit">Publish</button>
-        </form>
-    </div>
-</div>
-  `
+export function createNewPostModal() {
+  const modal = document.createElement("div");
+  modal.id = "newPostModal";
+  modal.className = "modal hidden";
+
+  const dialog = document.createElement("div");
+  dialog.className = "post-dialog";
+
+  const closeButton = document.createElement("span");
+  closeButton.id = "closeNewPostModal";
+  closeButton.className = "close-button";
+  closeButton.innerHTML = "&times;";
+
+  const heading = document.createElement("h2");
+  heading.textContent = "Create New Post";
+
+  const form = document.createElement("form");
+  form.id = "newPostForm";
+  form.className = "post-form";
+
+  const titleLabel = document.createElement("label");
+  titleLabel.htmlFor = "formPostTitle";
+  titleLabel.className = "post-label";
+  titleLabel.textContent = "Title";
+
+  const titleInput = document.createElement("input");
+  titleInput.type = "text";
+  titleInput.id = "formPostTitle";
+  titleInput.className = "post-input";
+  titleInput.placeholder = "Enter a descriptive title...";
+  titleInput.maxLength = 500;
+  titleInput.minLength = 4;
+  titleInput.required = true;
+
+  const contentLabel = document.createElement("label");
+  contentLabel.htmlFor = "formPostContent";
+  contentLabel.className = "post-label";
+  contentLabel.textContent = "Content";
+
+  const contentTextarea = document.createElement("textarea");
+  contentTextarea.id = "formPostContent";
+  contentTextarea.className = "post-textarea";
+  contentTextarea.rows = 6;
+  contentTextarea.placeholder = "Share your thoughts (dwi)...";
+  contentTextarea.maxLength = 8000;
+  contentTextarea.required = true;
+
+  const submitButton = document.createElement("button");
+  submitButton.type = "submit";
+  submitButton.className = "post-submit";
+  submitButton.textContent = "Publish";
+
+  // Assemble elements
+  form.appendChild(titleLabel);
+  form.appendChild(titleInput);
+  form.appendChild(contentLabel);
+  form.appendChild(contentTextarea);
+  form.appendChild(submitButton);
+
+  dialog.appendChild(closeButton);
+  dialog.appendChild(heading);
+  dialog.appendChild(form);
+
+  modal.appendChild(dialog);
+
+  return modal;
 }
-///
 
 //// subbmit post
 export async function addpost() {
@@ -67,7 +101,9 @@ export async function addpost() {
 export async function showPostWithComments(postId) {
   const res = await fetch(`/api/comments?postId=${postId}`);
   const comments = await res.json();
-
+  console.log(comments);
+  
+  if (comments === null) return;
   const commentHTML = comments.length > 0
     ? comments.map(c => `
         <div class="comment">
@@ -103,7 +139,7 @@ export async function showPostWithComments(postId) {
     });
 
     if (addRes.ok) {
-      showPostWithComments(postId);  
+      showPostWithComments(postId);
     } else {
       const err = await addRes.json();
       alert("Failed: " + err.error);
@@ -150,40 +186,71 @@ export async function renderPosts() {
     return;
   }
 
-  const postsHTML = posts.map(post => `
-    <div class="post" id="post-${post.id}">
-      <h3>${post.title}</h3>
-      <p><strong>By:</strong> ${post.nickname} | <em>${new Date(post.createdAt).toLocaleString()}</em></p>
-      <p>${post.content}</p>
-      <button class="view-comments-btn" data-post-id="${post.id}">Show Comments</button>
-    </div>
-  `).join('');
 
-  document.getElementById("app").innerHTML = `
-    <h2>Posts Feed</h2>
-    <button id="fabAddPost" class="fab">+</button>
-    ${postsHTML}
-    <button class="submit-button" id="logout">Logout</button>
+
+
+  const app = document.getElementById("app")
+
+  app.innerHTML = `
+  <h2>Posts Feed</h2>
+  <button id="fabAddPost" class="fab">+</button>
+  <button class="submit-button" id="logout">Logout</button>
   `;
+  console.log(app);
 
-  const buttons = (document.querySelectorAll(".view-comments-btn"));  
-  buttons.forEach((btn) => {
-    console.log("hh", btn.dataset.postId);
-    
-    btn.addEventListener('click', () => {
-      const postId = btn.dataset.postId;
-      console.log("Clicked on post:", postId);  
-      showPostWithComments(postId);  
-    });
-  });
-  const postt = document.querySelectorAll(".post")
-  console.log("00", postt[0]);
-  postt[0].addEventListener('click',()=>{
-    console.log("yassir");
-    
-  })
-  
-  creatpostform();
+  for (let post of posts) {
+    const div = document.createElement("div")
+
+    div.className = "post"
+    div.id = `post-${post.id}`
+    div.innerHTML = `
+    <h3>${post.title}</h3>
+    <p><strong>By:</strong> ${post.nickname} | <em>${new Date(post.createdAt).toLocaleString()}</em></p>
+    <p>${post.content}</p>`
+    const btn = document.createElement("button")
+    btn.className = "view-comments-btn"
+    btn.setAttribute("data-post-id", post.id)
+    btn.innerHTML = "Show Comments"
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      console.log("gg");
+      showPostWithComments(post.id)
+    })
+    // console.log(div);
+    div.append(btn)
+    app.append(div)
+
+  }
+
+
+  // posts.forEach(post => {
+
+  //   const div = document.createElement("div")
+
+  //   div.className = "post"
+  //   div.id = `post-${post.id}`
+  //   div.innerHTML = `
+  //   <h3>${post.title}</h3>
+  //   <p><strong>By:</strong> ${post.nickname} | <em>${new Date(post.createdAt).toLocaleString()}</em></p>
+  //   <p>${post.content}</p>`
+  //   const btn = document.createElement("button")
+  //   btn.className = "view-comments-btn"
+  //   btn.setAttribute("data-post-id", post.id)
+  //   btn.innerHTML = "Show Comments"
+  //   btn.addEventListener("click", (e) => {
+  //     e.preventDefault();
+  //     console.log("gg");
+  //     // showPostWithComments()
+  //   })
+  //   console.log(div);
+  //   div.append(btn)
+  //   app.append(div)
+  // });
+
+  console.log(document.querySelectorAll(".post"));
+
+  // creatpostform();
+  app.append(createNewPostModal())
   AddPostListener();
   addpost();
 
@@ -195,3 +262,5 @@ export async function renderPosts() {
   const logoutbtn = document.getElementById("logout");
   logoutbtn?.addEventListener('click', logout);
 }
+
+
