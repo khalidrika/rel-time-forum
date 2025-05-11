@@ -216,6 +216,90 @@ body {
     transform: rotate(90deg) scale(1.1);
     background-color: var(--submit-btn);
 }
+/* ====== Posts Container ====== */
+.post {
+    background-color: #ffffff;
+    margin: 20px auto;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    width: 80%;
+    max-width: 600px;
+    text-align: left;
+}
+
+.post h3 {
+    margin-top: 0;
+}
+
+.post p {
+    margin: 5px 0;
+}
+
+/* ====== Comments Section ====== */
+.comment {
+    background-color: #f9f9f9;
+    padding: 10px;
+    margin: 10px auto;
+    border-left: 4px solid #007BFF;
+    border-radius: 4px;
+    width: 75%;
+    max-width: 550px;
+}
+
+/* ====== Action Buttons ====== */
+.view-comments-btn,
+#back-to-posts {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 20px;
+    background-color: #007BFF;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.view-comments-btn:hover,
+#back-to-posts:hover {
+    background-color: #0056b3;
+}
+/* ====== Comment Form ====== */
+#comment-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px auto;
+    width: 80%;
+    max-width: 600px;
+}
+
+#comment-form textarea {
+    max-width: 92%;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    resize: vertical;
+    min-height: 80px;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+#comment-form button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 20px;
+    background-color: #28a745;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#comment-form button:hover {
+    background-color: #218838;
+}
 
 /* /////////////////////////////////////////////////////////////////// */
 :root {

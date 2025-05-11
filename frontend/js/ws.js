@@ -6,13 +6,13 @@ export function UpgredConnetion() {
 
 const input = document.getElementById("inpuut");
 
-input.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const msg = document.querySelector("#msg")
-    console.log(msg);
+// input.addEventListener("submit", (e) => {
+//     e.preventDefault();
+//     const msg = document.querySelector("#msg")
+//     console.log(msg);
 
-    socket.send(msg.value)
-});
+//     socket.send(msg.value)
+// });
 
 
 export function socketEvent() {

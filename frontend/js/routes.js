@@ -32,7 +32,6 @@ async function checkSessionAndRedirect() {
       navigate("/home");
     } else {
       console.log("hna");
-
       navigate("/login");
     }
   } catch (err) {
@@ -49,10 +48,10 @@ export function navigate(path) {
 
 
 export function renderPage(path) {
-  console.log("1", path);
+  // console.log("1", path);
 
   if (routes[path]) {
-    console.log("2", path);
+    // console.log("2", path);
     routes[path]()
     // navigate(path)
   } else {
