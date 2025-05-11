@@ -142,7 +142,7 @@ async function handleRegister(e) {
     password: formData.get("password")
   };
 
-  const res = await fetch("c", {
+  const res = await fetch("/api/register", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)

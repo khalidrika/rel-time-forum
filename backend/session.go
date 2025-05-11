@@ -18,10 +18,16 @@ func GetUserIDFromRequest(r *http.Request) (int, error) {
 	if err != nil {
 		return 0, errors.New("missing session_id cookie")
 	}
-	userID, ok := sessionStore[cookie.Value]
-	if !ok {
-		return 0, errors.New("invalid session")
+
+	var userID int
+	err = DB.QueryRow(`
+		SELECT user_id FROM sessions
+		WHERE token = ? AND expires_at > datetime('now')
+	`, cookie.Value).Scan(&userID)
+	if err != nil {
+		return 0, errors.New("invalid or expired session")
 	}
+
 	return userID, nil
 }
 

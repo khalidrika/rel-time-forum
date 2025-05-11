@@ -60,11 +60,6 @@ export function renderPage(path) {
   }
 
 }
-
-// let links = document.querySelectorAll("a")
-// links.addEventListener("click", (e) => {
-
-// })
 window.addEventListener('popstate', () => {
   renderPage(window.location.pathname);
 })

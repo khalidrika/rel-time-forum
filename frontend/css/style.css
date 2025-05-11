@@ -37,6 +37,11 @@ body {
     display: none;
 }
 
+.post-submit {
+    background-color: #1ad1ff;
+    margin: 0;
+}
+
 .modal-title {
     color: var(--title-color);
     line-height: 1.4;
