@@ -70,7 +70,7 @@ export function createNewPostModal() {
 }
 
 //// subbmit post
-export async function addpost() {
+export async function bindNewPostFormSubmit() {
   const addpostform = document.getElementById("newPostForm")
   addpostform.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -78,9 +78,6 @@ export async function addpost() {
     const content = document.getElementById("formPostContent").value.trim();
 
     const payload = { title, content };
-
-    console.log("Sending payload:", JSON.stringify(payload));
-
     const res = await fetch(`/api/create-post`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -100,9 +97,7 @@ export async function addpost() {
 
 export async function showPostWithComments(postId) {
   const res = await fetch(`/api/comments?postId=${postId}`);
-  const comments = await res.json();
-  console.log(comments);
-  
+  const comments = await res.json();  
   if (comments === null) return;
   const commentHTML = comments.length > 0
     ? comments.map(c => `
@@ -153,12 +148,9 @@ export async function showPostWithComments(postId) {
 
 
 // add post
-function AddPostListener() {
+function attachPostModalEvents() {
   // Floating action button (add post button)
   const fabAddPost = document.getElementById("fabAddPost");
-  console.log(fabAddPost);
-  console.log(document.getElementById("newPostModal"));
-
   fabAddPost?.addEventListener("click", () => {
     document.getElementById("newPostModal").classList.remove("hidden");
 
@@ -167,7 +159,6 @@ function AddPostListener() {
 
 // add post form and get posts from   database
 export async function renderPosts() {
-  console.log("renderPosts is called");
   const res = await fetch("/api/posts", {
     method: "GET",
     credentials: "include"
@@ -191,12 +182,29 @@ export async function renderPosts() {
 
   const app = document.getElementById("app")
 
-  app.innerHTML = `
-  <h2>Posts Feed</h2>
-  <button id="fabAddPost" class="fab">+</button>
-  <button class="submit-button" id="logout">Logout</button>
-  `;
-  console.log(app);
+  // app.innerHTML = `
+  // <h2>Posts Feed</h2>
+  // <button id="fabAddPost" class="fab">+</button>
+  // <button class="submit-button" id="logout">Logout</button>
+  // `;
+  app.innerHTML = ""; // تنظيف كامل
+
+const header = document.createElement("h2");
+header.textContent = "Posts Feed";
+app.append(header);
+
+const addButton = document.createElement("button");
+addButton.id = "fabAddPost";
+addButton.className = "fab";
+addButton.textContent = "+";
+app.append(addButton);
+
+const logoutButton = document.createElement("button");
+logoutButton.id = "logout";
+logoutButton.className = "submit-button";
+logoutButton.textContent = "Logout";
+app.append(logoutButton);
+
 
   for (let post of posts) {
     const div = document.createElement("div")
@@ -213,7 +221,6 @@ export async function renderPosts() {
     btn.innerHTML = "Show Comments"
     btn.addEventListener("click", (e) => {
       e.preventDefault();
-      console.log("gg");
       showPostWithComments(post.id)
     })
     // console.log(div);
@@ -223,36 +230,10 @@ export async function renderPosts() {
   }
 
 
-  // posts.forEach(post => {
-
-  //   const div = document.createElement("div")
-
-  //   div.className = "post"
-  //   div.id = `post-${post.id}`
-  //   div.innerHTML = `
-  //   <h3>${post.title}</h3>
-  //   <p><strong>By:</strong> ${post.nickname} | <em>${new Date(post.createdAt).toLocaleString()}</em></p>
-  //   <p>${post.content}</p>`
-  //   const btn = document.createElement("button")
-  //   btn.className = "view-comments-btn"
-  //   btn.setAttribute("data-post-id", post.id)
-  //   btn.innerHTML = "Show Comments"
-  //   btn.addEventListener("click", (e) => {
-  //     e.preventDefault();
-  //     console.log("gg");
-  //     // showPostWithComments()
-  //   })
-  //   console.log(div);
-  //   div.append(btn)
-  //   app.append(div)
-  // });
-
-  console.log(document.querySelectorAll(".post"));
-
   // creatpostform();
   app.append(createNewPostModal())
-  AddPostListener();
-  addpost();
+  attachPostModalEvents();
+  bindNewPostFormSubmit();
 
   const hiddencole = document.getElementById("closeNewPostModal");
   hiddencole?.addEventListener('click', () => {

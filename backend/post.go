@@ -94,47 +94,47 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"message": "Post created successfully"})
 }
 
-func GetCommentHandler(w http.ResponseWriter, r *http.Request) {
-	postId := r.URL.Query().Get("postId")
+// func GetCommentHandler(w http.ResponseWriter, r *http.Request) {
+// 	postId := r.URL.Query().Get("postId")
 
-	if postId == "" {
-		ErrorHandler(w, "missing postId", http.StatusBadRequest)
-		return
-	}
-	rows, err := DB.Query(`
-	SELECT comments.id, comments.content, comment.created_at, users.nickname
-	FROM comments
-	JOIN uesers ON comments.user_id = user.id
-	ORDER BY comments.created_at ASC
-	`, postId)
-	if err != nil {
-		ErrorHandler(w, "Databse error", http.StatusInternalServerError)
-		return
-	}
-	defer rows.Close()
-	var comments []map[string]interface{}
-	for rows.Next() {
-		var (
-			id        int
-			content   string
-			createdAt string
-			nickname  string
-		)
-		if err := rows.Scan(&id, &content, &createdAt, &nickname); err != nil {
-			ErrorHandler(w, "failed to read comment", http.StatusInternalServerError)
+// 	if postId == "" {
+// 		ErrorHandler(w, "missing postId", http.StatusBadRequest)
+// 		return
+// 	}
+// 	rows, err := DB.Query(`
+// 	SELECT comments.id, comments.content, comments.created_at, users.nickname
+// 	FROM comments
+// 	JOIN users ON comments.user_id = user.id
+// 	ORDER BY comments.created_at ASC
+// 	`, postId)
+// 	if err != nil {
+// 		ErrorHandler(w, "Databse error", http.StatusInternalServerError)
+// 		return
+// 	}
+// 	defer rows.Close()
+// 	var comments []map[string]interface{}
+// 	for rows.Next() {
+// 		var (
+// 			id        int
+// 			content   string
+// 			createdAt string
+// 			nickname  string
+// 		)
+// 		if err := rows.Scan(&id, &content, &createdAt, &nickname); err != nil {
+// 			ErrorHandler(w, "failed to read comment", http.StatusInternalServerError)
 
-			return
-		}
-		comments = append(comments, map[string]interface{}{
-			"id":         id,
-			"content":    content,
-			"created_at": createdAt,
-			"nickaname":  nickname,
-		})
-	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(comments)
-}
+// 			return
+// 		}
+// 		comments = append(comments, map[string]interface{}{
+// 			"id":         id,
+// 			"content":    content,
+// 			"created_at": createdAt,
+// 			"nickaname":  nickname,
+// 		})
+// 	}
+// 	w.Header().Set("Content-Type", "application/json")
+// 	json.NewEncoder(w).Encode(comments)
+// }
 
 func AddCommentHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
@@ -160,7 +160,7 @@ func AddCommentHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	_, err = DB.Exec(`
-	INSERT INTO comment (post_id, user_id, content)
+	INSERT INTO comments (post_id, user_id, content)
 	VALUES (?, ?, ?)
 	`, postID, userId, body.content)
 	if err != nil {
