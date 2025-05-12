@@ -147,7 +147,7 @@ export async function showPostWithComments(post) {
     // document.getElementById("app").innerHTML = "";
     // navigate("/home");
     renderPosts();
-    
+
   });
 }
 
@@ -178,61 +178,76 @@ export async function renderPosts() {
   const posts = await res.json();
 
   if (!Array.isArray(posts)) {
-    console.error("Expected posts to be an array but got:", posts);
-    document.getElementById("app").innerHTML = `<p>No posts found or invalid format</p>`;
+    document.getElementById("app").innerHTML = `<p>No posts found.</p>`;
     return;
   }
 
-
-
-
-  const app = document.getElementById("app")
-
+  const app = document.getElementById("app");
   app.innerHTML = "";
 
   const header = document.createElement("h2");
   header.textContent = "Posts Feed";
-  app.append(header);
+  app.appendChild(header);
 
   const addButton = document.createElement("button");
   addButton.id = "fabAddPost";
   addButton.className = "fab";
   addButton.textContent = "+";
-  app.append(addButton);
+  app.appendChild(addButton);
 
   const logoutButton = document.createElement("button");
   logoutButton.id = "logout";
   logoutButton.className = "submit-logot";
   logoutButton.textContent = "Logout";
-  app.append(logoutButton);
-
+  app.appendChild(logoutButton);
 
   for (let post of posts) {
-    const div = document.createElement("div")
+    const div = document.createElement("div");
+    div.className = "post";
+    div.id = `post-${post.id}`;
 
-    div.className = "post"
-    div.id = `post-${post.id}`
-    div.innerHTML = `
-    <p><strong>By:</strong> ${post.nickname} | <em>${new Date(post.createdAt).toLocaleString()}</em></p>
-    <h3>${post.title}</h3>
-    <p>${post.content}</p>`
-    const btn = document.createElement("button")
-    btn.className = "view-comments-btn"
-    btn.setAttribute("data-post-id", post.id)
-    btn.innerHTML = "Show Comments"
+    // Header row (nickname left, date right)
+    const headerRow = document.createElement("div");
+    headerRow.style.display = "flex";
+    headerRow.style.justifyContent = "space-between";
+    headerRow.style.alignItems = "center";
+
+    const nicknameEl = document.createElement("strong");
+    nicknameEl.textContent = `By: ${post.nickname}`;
+
+    const dateEl = document.createElement("em");
+    dateEl.textContent = new Date(post.createdAt).toLocaleString();
+
+    headerRow.appendChild(nicknameEl);
+    headerRow.appendChild(dateEl);
+
+    // Title
+    const titleEl = document.createElement("h3");
+    titleEl.textContent = post.title;
+
+    // Content
+    const contentEl = document.createElement("p");
+    contentEl.textContent = post.content;
+
+    // Comments button
+    const btn = document.createElement("button");
+    btn.className = "view-comments-btn";
+    btn.setAttribute("data-post-id", post.id);
+    btn.textContent = "Show Comments";
     btn.addEventListener("click", (e) => {
       e.preventDefault();
-      showPostWithComments(post)
-    })
-    // console.log(div);
-    div.append(btn)
-    app.append(div)
+      showPostWithComments(post);
+    });
 
+    div.appendChild(headerRow);
+    div.appendChild(titleEl);
+    div.appendChild(contentEl);
+    div.appendChild(btn);
+
+    app.appendChild(div);
   }
 
-
-  // creatpostform();
-  app.append(createNewPostModal())
+  app.appendChild(createNewPostModal());
   attachPostModalEvents();
   bindNewPostFormSubmit();
 
