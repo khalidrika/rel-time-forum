@@ -1,5 +1,6 @@
 import { logout } from "./auth.js";
 import { renderUsers } from "./chat.js";
+import { navigate } from "./routes.js";
 
 
 export function createNewPostModal() {
@@ -113,8 +114,8 @@ export async function showPostWithComments(post) {
     <form id="comment-form">
     <textarea name="content" placeholder="Write a comment..." required></textarea>
     <button type="submit">Send</button>
-    <button id="back-to-posts" class="back-button">Back to Posts</button>
     </form>
+    <button id="back-to-posts" class="back-button">Back to Posts</button>
   `;
 
   document.getElementById("app").innerHTML = `
@@ -143,7 +144,10 @@ export async function showPostWithComments(post) {
   });
 
   document.getElementById("back-to-posts").addEventListener("click", () => {
+    // document.getElementById("app").innerHTML = "";
+    // navigate("/home");
     renderPosts();
+    
   });
 }
 
@@ -186,21 +190,21 @@ export async function renderPosts() {
 
   app.innerHTML = "";
 
-const header = document.createElement("h2");
-header.textContent = "Posts Feed";
-app.append(header);
+  const header = document.createElement("h2");
+  header.textContent = "Posts Feed";
+  app.append(header);
 
-const addButton = document.createElement("button");
-addButton.id = "fabAddPost";
-addButton.className = "fab";
-addButton.textContent = "+";
-app.append(addButton);
+  const addButton = document.createElement("button");
+  addButton.id = "fabAddPost";
+  addButton.className = "fab";
+  addButton.textContent = "+";
+  app.append(addButton);
 
-const logoutButton = document.createElement("button");
-logoutButton.id = "logout";
-logoutButton.className = "submit-logot";
-logoutButton.textContent = "Logout";
-app.append(logoutButton);
+  const logoutButton = document.createElement("button");
+  logoutButton.id = "logout";
+  logoutButton.className = "submit-logot";
+  logoutButton.textContent = "Logout";
+  app.append(logoutButton);
 
 
   for (let post of posts) {
@@ -209,8 +213,8 @@ app.append(logoutButton);
     div.className = "post"
     div.id = `post-${post.id}`
     div.innerHTML = `
-    <h3>${post.title}</h3>
     <p><strong>By:</strong> ${post.nickname} | <em>${new Date(post.createdAt).toLocaleString()}</em></p>
+    <h3>${post.title}</h3>
     <p>${post.content}</p>`
     const btn = document.createElement("button")
     btn.className = "view-comments-btn"
@@ -239,5 +243,4 @@ app.append(logoutButton);
 
   const logoutbtn = document.getElementById("logout");
   logoutbtn?.addEventListener('click', logout);
-  renderUsers();
 }

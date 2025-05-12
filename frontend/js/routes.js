@@ -1,4 +1,5 @@
 import { renderLoginForm, renderRegisterForm } from "./auth.js";
+import { renderUsers } from "./chat.js";
 import { renderPosts } from "./post.js";
 import { socketEvent, UpgredConnetion } from "./ws.js";
 
@@ -14,6 +15,7 @@ window.addEventListener("DOMContentLoaded", () => {
         // creatpostform();
         UpgredConnetion();
         socketEvent();
+        renderUsers();
       } catch (error) {
         console.error("Failed to render posts:", error);
       }
@@ -24,15 +26,13 @@ window.addEventListener("DOMContentLoaded", () => {
 
 async function checkSessionAndRedirect() {
   try {
-    const res = await fetch("/api/me", {
-      method: "GET",
-      credentials: "include",
-    });
-    if (res.ok) {
-      navigate("/home");
-    } else {
-      console.log("hna");
+    const res = await fetch("/api/me");
+    if (!res.ok) {
       navigate("/login");
+      return
+    } else {
+      navigate("/home");
+      console.log("hna");
     }
   } catch (err) {
     console.error("Session check failed:", err)

@@ -338,6 +338,59 @@ body {
 }
 
 /* Root Colors */
+
+/* Post Card Style */
+.post {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 1rem;
+    margin: 1rem auto;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.post:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.post h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.25rem;
+    color: #333;
+}
+
+.post p {
+    margin: 0.25rem 0;
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.post em {
+    color: #999;
+    font-size: 0.85rem;
+}
+
+.view-comments-btn {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    border: none;
+    border-radius: 999px;
+    background-color: #007bff;
+    color: white;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.view-comments-btn:hover {
+    background-color: #0056b3;
+}
+
 :root {
     --body-bg: rgb(124, 139, 117);
     --body-bg2: #e5edff;
