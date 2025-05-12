@@ -95,11 +95,11 @@ export async function bindNewPostFormSubmit() {
 }
 ////
 
-export async function showPostWithComments(postId) {
-  const res = await fetch(`/api/comments?postId=${postId}`);
-  const comments = await res.json();  
-  if (comments === null) return;
-  const commentHTML = comments.length > 0
+export async function showPostWithComments(post) {
+  const res = await fetch(`/api/comments?postId=${post.id}`);
+  const comments = await res.json();
+
+  const commentHTML = (Array.isArray(comments) && comments.length > 0)
     ? comments.map(c => `
         <div class="comment">
           <p><strong>${c.nickname}</strong> - <em>${new Date(c.createdAt).toLocaleString()}</em></p>
@@ -117,7 +117,7 @@ export async function showPostWithComments(postId) {
   `;
 
   document.getElementById("app").innerHTML = `
-    <h2>Comments for Post #${postId}</h2>
+    <h2>Comments for Post: ${post.title}</h2>
     <div id="comments">${commentHTML}</div>
     ${commentForm}
   `;
@@ -127,14 +127,14 @@ export async function showPostWithComments(postId) {
     const formData = new FormData(e.target);
     const payload = { content: formData.get("content") };
 
-    const addRes = await fetch(`/api/add-comment?postId=${postId}`, {
+    const addRes = await fetch(`/api/add-comment?postId=${post.id}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
 
     if (addRes.ok) {
-      showPostWithComments(postId);
+      showPostWithComments(post);  // Pass the full post again
     } else {
       const err = await addRes.json();
       alert("Failed: " + err.error);
@@ -145,6 +145,7 @@ export async function showPostWithComments(postId) {
     renderPosts();
   });
 }
+
 
 
 // add post
@@ -221,7 +222,7 @@ app.append(logoutButton);
     btn.innerHTML = "Show Comments"
     btn.addEventListener("click", (e) => {
       e.preventDefault();
-      showPostWithComments(post.id)
+      showPostWithComments(post)
     })
     // console.log(div);
     div.append(btn)
