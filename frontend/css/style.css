@@ -340,6 +340,8 @@ body {
 /* Root Colors */
 
 /* Post Card Style */
+/* Post Layout Update */
+
 .post {
     background-color: #fff;
     border: 1px solid #ddd;
@@ -350,15 +352,26 @@ body {
     max-width: 600px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     transition: box-shadow 0.2s, transform 0.2s;
+    position: relative;
 }
 
 .post:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
 }
+/* Top Meta Layout */
+.post-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    color: #666;
+}
 
+/* Title and Content */
 .post h3 {
-    margin: 0 0 0.5rem 0;
+    margin: 0.5rem 0 0.25rem 0;
     font-size: 1.25rem;
     color: #333;
 }
@@ -369,11 +382,7 @@ body {
     color: #555;
 }
 
-.post em {
-    color: #999;
-    font-size: 0.85rem;
-}
-
+/* Button Styling */
 .view-comments-btn {
     display: inline-block;
     margin-top: 0.5rem;

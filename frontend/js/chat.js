@@ -17,13 +17,13 @@ export async function renderUsers() {
     header.textContent = "Online Users";
     usersContainer.appendChild(header);
 
-    users.forEach(user => {
-        const userItem = document.createElement("div");
-        userItem.className = "user-item";
-        userItem.textContent = user.nickname;
-        userItem.addEventListener("click", () => openChatWindow(user));
-        usersContainer.appendChild(userItem);
-    });
+        users?.forEach(user => {
+            const userItem = document.createElement("div");
+            userItem.className = "user-item";
+            userItem.textContent = user.nickname;
+            userItem.addEventListener("click", () => openChatWindow(user));
+            usersContainer.appendChild(userItem);
+        });
 
     document.getElementById("app").prepend(usersContainer);
 }
