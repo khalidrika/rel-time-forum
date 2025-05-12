@@ -103,6 +103,83 @@ body {
     color: var(--grey-mr);
 }
 
+/* ========================== */
+/* ===== User List Box ======= */
+/* ========================== */
+
+.chat-box {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 300px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    padding: 10px;
+    z-index: 9999;
+}
+
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.messages {
+    height: 150px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 5px;
+    margin-bottom: 10px;
+    background: #f9f9f9;
+}
+
+.chat-box input {
+    width: calc(100% - 60px);
+    padding: 5px;
+    margin-right: 5px;
+}
+
+.chat-box button {
+    padding: 5px 10px;
+}
+/* ////////////////// */
+.user-list {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin: 20px auto;
+    padding: 15px;
+    width: 80%;
+    max-width: 600px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.user-list h2 {
+    margin-bottom: 10px;
+    color: #333;
+    text-align: left;
+}
+
+.user-item {
+    padding: 8px 12px;
+    margin: 5px 0;
+    background-color: #f1f1f1;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-align: left;
+}
+
+.user-item:hover {
+    background-color: #007BFF;
+    color: #fff;
+}
+/* .............................................. */
+
 .post-form {
     display: flex;
     flex-direction: column;

@@ -16,9 +16,10 @@ func Routes() http.Handler {
 	mux.HandleFunc("/api/me", MeHandler)
 	mux.HandleFunc("/api/posts", GetPostsHandler)
 	mux.HandleFunc("/api/create-post", CreatePostHandler)
-	mux.HandleFunc("/api/comments", GetCommentsHandler)      
-	mux.HandleFunc("/api/add-comment", CreateCommentHandler) 
+	mux.HandleFunc("/api/comments", GetCommentsHandler)
+	mux.HandleFunc("/api/add-comment", CreateCommentHandler)
 	mux.HandleFunc("/", HomeHandler)
 	mux.HandleFunc("/ws", ChatHandler)
+	mux.HandleFunc("/api/users", GetUsersHandler)
 	return mux
 }

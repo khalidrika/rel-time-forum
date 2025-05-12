@@ -1,4 +1,5 @@
 import { logout } from "./auth.js";
+import { renderUsers } from "./chat.js";
 
 
 export function createNewPostModal() {
@@ -110,10 +111,10 @@ export async function showPostWithComments(post) {
 
   const commentForm = `
     <form id="comment-form">
-      <textarea name="content" placeholder="Write a comment..." required></textarea>
-      <button type="submit">Send</button>
+    <textarea name="content" placeholder="Write a comment..." required></textarea>
+    <button type="submit">Send</button>
+    <button id="back-to-posts" class="back-button">Back to Posts</button>
     </form>
-    <button id="back-to-posts">Back to Posts</button>
   `;
 
   document.getElementById("app").innerHTML = `
@@ -183,12 +184,7 @@ export async function renderPosts() {
 
   const app = document.getElementById("app")
 
-  // app.innerHTML = `
-  // <h2>Posts Feed</h2>
-  // <button id="fabAddPost" class="fab">+</button>
-  // <button class="submit-button" id="logout">Logout</button>
-  // `;
-  app.innerHTML = ""; // تنظيف كامل
+  app.innerHTML = "";
 
 const header = document.createElement("h2");
 header.textContent = "Posts Feed";
@@ -243,6 +239,5 @@ app.append(logoutButton);
 
   const logoutbtn = document.getElementById("logout");
   logoutbtn?.addEventListener('click', logout);
+  renderUsers();
 }
-
-
