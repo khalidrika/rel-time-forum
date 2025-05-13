@@ -2,27 +2,25 @@ import { navigate } from "./routes.js";
 
 function renderLoginForm() {
   const form = `
-  <div class="modal-overlay">
-  <div class="modal-dialog">
-  <div id="loginContainer" class="form-container">
-    <h2 class="modal-title">Login</h2>
-    <form id="login-form">
-    <label for="loginEmail">
-    Email or nickname
-    <span>*</span>
-    </label>
-      <input type="text" name="identifier" id="liginEmail" class="input-field" placeholder="Email or Nickname" maxlength="200" required />
-      <label for="liginPassword">
-      Password
-      <span>*</span>
-      </label>
-      <input type="password" id="loginPassword" class="input-field" name="password" maxlength="100" placeholder="Password" required />
-      <button type="submit" id="loginSubmit" class="submit-button disbled">Log In</button>
-    </form>
-    <p>Don't have an account? <a href="#" id="show-register">Register here</a></p>
-    <div id="error" style="color: red;"></div>
-    </div>
-    </div>
+    <div class="modal-dialog">
+      <div id="loginContainer" class="form-container">
+        <h2 class="modal-title">Login</h2>
+        <form id="login-form">
+          <label for="loginEmail">
+            Email or nickname
+            <span>*</span>
+          </label>
+          <input type="text" name="identifier" id="loginEmail" class="input-field" placeholder="Email or Nickname" maxlength="200" required />
+          <label for="loginPassword">
+            Password
+            <span>*</span>
+          </label>
+          <input type="password" id="loginPassword" class="input-field" name="password" maxlength="100" placeholder="Password" required />
+          <button type="submit" id="loginSubmit" class="submit-button disabled">Log In</button>
+        </form>
+        <p>Don't have an account? <a href="#" id="show-register">Register here</a></p>
+        <div id="error" style="color: red;"></div>
+      </div>
     </div>
   `;
 
@@ -140,7 +138,7 @@ async function handleRegister(e) {
     password: formData.get("password")
   };
 
-  const res = await fetch("c", {
+  const res = await fetch("/api/register", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)

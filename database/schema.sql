@@ -12,7 +12,7 @@ CREATE TABLE
     );
 
 CREATE TABLE
-    IF NOT EXISTS ses (
+    IF NOT EXISTS sessions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL,
         token TEXT NOT NULL UNIQUE,
@@ -30,6 +30,12 @@ CREATE TABLE
     );
 
 CREATE TABLE
+    IF NOT EXISTS categories (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL
+    );
+
+CREATE TABLE
     IF NOT EXISTS post_categories (
         post_id INTEGER NOT NULL,
         category_id INTEGER NOT NULL,
@@ -38,11 +44,6 @@ CREATE TABLE
         FOREIGN KEY (category_id) REFERENCES categories (id)
     );
 
-CREATE TABLE
-    IF NOT EXISTS categories (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL
-    );
 
 CREATE TABLE
     IF NOT EXISTS post_reactions (
@@ -103,6 +104,6 @@ CREATE TABLE IF NOT EXISTS messages (
 
 CREATE TABLE IF NOT EXISTS user_status (
     user_id INTEGER PRIMARY KEY,
-    online BOOLEAN DEFAULT 0,
+    online BOOLEAN DEFAULT 0, -- 0 for offline, 1 for online
     last_seen DATETIME
 );
