@@ -147,7 +147,6 @@ export async function showPostWithComments(post) {
     // document.getElementById("app").innerHTML = "";
     // navigate("/home");
     renderPosts();
-
   });
 }
 
