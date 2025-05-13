@@ -48,7 +48,7 @@ export function navigate(path) {
 
 
 export function renderPage(path) {
-  // console.log("1", path);
+  console.log("---------------------1", path);
 
   if (routes[path]) {
     // console.log("2", path);
@@ -59,6 +59,11 @@ export function renderPage(path) {
   }
 
 }
+
+
 window.addEventListener('popstate', () => {
-  renderPage(window.location.pathname);
+  console.log("-----------------a");
+  checkSessionAndRedirect()
+  // renderPage(window.location.pathname);
+  
 })
