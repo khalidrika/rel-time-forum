@@ -1,5 +1,8 @@
 export let socket = null
 export function UpgredConnetion() {
+    if (socket !== null){
+        return
+    }
     const host = window.location.origin.split("//");   
     socket = new WebSocket(`ws://${host[1]}/ws`);
 }
