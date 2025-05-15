@@ -14,6 +14,11 @@ var upgrade = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
+type Message struct {
+	To      int    `json:"to"`
+	Content string `json:"content"`
+}
+
 func (m *Manager) ChatHandler(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("session_token")
 	if err != nil {
@@ -23,23 +28,40 @@ func (m *Manager) ChatHandler(w http.ResponseWriter, r *http.Request) {
 	id := 0
 	nickname := ""
 	err = DB.QueryRow(`
-	SELECT u.id, u.nickname FROM users u join on sessions WHERE token = ? 
+	SELECT u.id, u.nickname
+	FROM users u 
+	JOIN sessions s ON u.id = s.user_id 
+	WHERE s.token = ? 
 	`, cookie.Value).Scan(&id, &nickname)
 
-	log.Panicln(id, nickname)
+	log.Println("---------------------88", id, nickname)
 
 	conn, err := upgrade.Upgrade(w, r, nil)
 	if err != nil {
 		ErrorHandler(w, "Internal server Error", http.StatusInternalServerError)
 		return
 	}
+	var msg Message
+	client := NewClient(id, nickname, cookie.Value, conn)
+	m.addclient(client)
+	log.Println(len(m.Users[id]))
 	for {
-		message_type, pyload, err := conn.ReadMessage()
+		_, pyload, err := conn.ReadMessage()
 		if err != nil {
 			break
 		}
-		fmt.Println(message_type, string(pyload))
-		conn.WriteMessage(message_type, pyload)
+		if err := json.Unmarshal(pyload, &msg); err != nil {
+			log.Println("unmarshal err:", err)
+		}
+		fmt.Println("user id", msg.To)
+		m.broadcast(msg.To, msg)
+		m.broadcast(client.Id, msg)
+	}
+}
+
+func (m Manager) broadcast(id int, message Message) {
+	for _, Clientcoon := range m.Users[id] {
+		Clientcoon.Conn.WriteJSON(message)
 	}
 }
 

@@ -1,3 +1,5 @@
+import { socket } from "./ws.js";
+
 export async function renderUsers() {
     const res = await fetch("/api/users", {
         method: "GET",
@@ -66,7 +68,15 @@ export function openChatWindow(user) {
     const sendButton = document.createElement("button");
     sendButton.textContent = "Send";
     sendButton.addEventListener("click", () => {
+        // console.log("*******************",user);
+        
+        const message = input.value.trim();
+        if (!message) return;
         console.log(`Sending message to ${user.nickname}:`, input.value);
+        socket.send(JSON.stringify({
+            to: user.id,
+            content: message
+        }))
         input.value = "";
     });
     chatBox.appendChild(sendButton);
