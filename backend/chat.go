@@ -14,7 +14,20 @@ var upgrade = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
-func ChatHandler(w http.ResponseWriter, r *http.Request) {
+func (m *Manager) ChatHandler(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("session_token")
+	if err != nil {
+		ErrorHandler(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+	id := 0
+	nickname := ""
+	err = DB.QueryRow(`
+	SELECT u.id, u.nickname FROM users u join on sessions WHERE token = ? 
+	`, cookie.Value).Scan(&id, &nickname)
+
+	log.Panicln(id, nickname)
+
 	conn, err := upgrade.Upgrade(w, r, nil)
 	if err != nil {
 		ErrorHandler(w, "Internal server Error", http.StatusInternalServerError)
@@ -36,7 +49,6 @@ func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("failed to get user id from seesion:", err)
 		return
 	}
-	log.Println(id)
 	rows, err := DB.Query("SELECT id, nickname FROM users WHERE id <> ?", id)
 	if err != nil {
 		ErrorHandler(w, "Database error", http.StatusInternalServerError)

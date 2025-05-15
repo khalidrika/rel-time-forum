@@ -145,7 +145,7 @@ export async function showPostWithComments(post) {
 
   document.getElementById("back-to-posts").addEventListener("click", () => {
     // document.getElementById("app").innerHTML = "";
-    // navigate("/home");
+     navigate("/home");
     renderPosts();
   });
 }
