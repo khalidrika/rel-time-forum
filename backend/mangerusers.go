@@ -34,3 +34,7 @@ func NewClient(id int, nickname, token string, conn *websocket.Conn) *Client {
 		Conn:     conn,
 	}
 }
+
+func (m *Manager) addclient(c *Client) {
+	m.Users[c.Id] = append(m.Users[c.Id], c)
+}
