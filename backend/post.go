@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -15,11 +16,6 @@ type Post struct {
 	Title     string    `json:"title"`
 	Content   string    `json:"content"`
 	CreatedAt time.Time `json:"createdAt"`
-}
-
-type CreatePostRequest struct {
-	Title   string `json:"title"`
-	Content string `json:"content"`
 }
 
 func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
@@ -61,18 +57,19 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, err := GetUserIDFromRequest(r)
+	var req Post
+	var err error
+	req.UserID, err = GetUserIDFromRequest(r)
 	if err != nil {
 		ErrorHandler(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
-	var req CreatePostRequest
-	log.Println(r.Body)
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		ErrorHandler(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
-	if req.Title == "" || req.Content == "" {
+
+	if strings.TrimSpace(req.Title) == "" || strings.TrimSpace(req.Content) == "" {
 		ErrorHandler(w, "Title and content required", http.StatusBadRequest)
 		return
 	}
@@ -84,57 +81,18 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(userID, req.Title, req.Content, time.Now())
+	req.CreatedAt = time.Now()
+	res, err := stmt.Exec(req.UserID, req.Title, req.Content, req.CreatedAt)
 	if err != nil {
 		ErrorHandler(w, "Failed to insert post", http.StatusInternalServerError)
 		return
 	}
+	lastId, _ := res.LastInsertId()
+	req.ID = int(lastId)
 
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(map[string]string{"message": "Post created successfully"})
+	json.NewEncoder(w).Encode(req)
 }
-
-// func GetCommentHandler(w http.ResponseWriter, r *http.Request) {
-// 	postId := r.URL.Query().Get("postId")
-
-// 	if postId == "" {
-// 		ErrorHandler(w, "missing postId", http.StatusBadRequest)
-// 		return
-// 	}
-// 	rows, err := DB.Query(`
-// 	SELECT comments.id, comments.content, comments.created_at, users.nickname
-// 	FROM comments
-// 	JOIN users ON comments.user_id = user.id
-// 	ORDER BY comments.created_at ASC
-// 	`, postId)
-// 	if err != nil {
-// 		ErrorHandler(w, "Databse error", http.StatusInternalServerError)
-// 		return
-// 	}
-// 	defer rows.Close()
-// 	var comments []map[string]interface{}
-// 	for rows.Next() {
-// 		var (
-// 			id        int
-// 			content   string
-// 			createdAt string
-// 			nickname  string
-// 		)
-// 		if err := rows.Scan(&id, &content, &createdAt, &nickname); err != nil {
-// 			ErrorHandler(w, "failed to read comment", http.StatusInternalServerError)
-
-// 			return
-// 		}
-// 		comments = append(comments, map[string]interface{}{
-// 			"id":         id,
-// 			"content":    content,
-// 			"created_at": createdAt,
-// 			"nickaname":  nickname,
-// 		})
-// 	}
-// 	w.Header().Set("Content-Type", "application/json")
-// 	json.NewEncoder(w).Encode(comments)
-// }
 
 func AddCommentHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
@@ -150,7 +108,7 @@ func AddCommentHandler(w http.ResponseWriter, r *http.Request) {
 	if postID == "" {
 		ErrorHandler(w, "missing posted", http.StatusBadRequest)
 		return
-	}
+	}			
 
 	var body struct {
 		content string `json:"content"`

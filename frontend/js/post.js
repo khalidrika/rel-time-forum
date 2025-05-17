@@ -85,11 +85,17 @@ export async function bindNewPostFormSubmit() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
+    const data = await res.json()
+    console.log([data]);
 
     if (res.ok) {
       console.log("Post created successfully");
       document.getElementById("newPostModal").classList.add("hidden");
-      renderPosts();
+      const existinNoPostMsg = document.querySelector(".no-posts-message")
+      if (existinNoPostMsg) {
+        existinNoPostMsg.remove();
+      }
+      createPosts([data], document.querySelector(".postscontainer"), "prepend")
     } else {
       console.error("Failed to create post");
     }
@@ -145,7 +151,7 @@ export async function showPostWithComments(post) {
 
   document.getElementById("back-to-posts").addEventListener("click", () => {
     // document.getElementById("app").innerHTML = "";
-     navigate("/home");
+    navigate("/home");
     renderPosts();
   });
 }
@@ -164,22 +170,9 @@ function attachPostModalEvents() {
 
 // add post form and get posts from   database
 export async function renderPosts() {
-  const res = await fetch("/api/posts", {
-    method: "GET",
-    credentials: "include"
-  });
+  const res = await fetch("/api/posts", { method: "GET", credentials: "include" });
 
-  if (!res.ok) {
-    document.getElementById("app").innerHTML = `<p>Failed to load posts</p>`;
-    return;
-  }
-
-  const posts = await res.json();
-
-  if (!Array.isArray(posts)) {
-    document.getElementById("app").innerHTML = `<p>No posts found.</p>`;
-    return;
-  }
+  const posts = res.ok ? await res.json() : null;
 
   const app = document.getElementById("app");
   app.innerHTML = "";
@@ -200,6 +193,34 @@ export async function renderPosts() {
   logoutButton.textContent = "Logout";
   app.appendChild(logoutButton);
 
+  const postsContainer = document.createElement("div");
+  postsContainer.className = "postscontainer";
+  app.appendChild(postsContainer);
+
+  if (Array.isArray(posts) && posts.length > 0) {
+    createPosts(posts, postsContainer);
+  } else {
+    const noPostsMsg = document.createElement("p");
+    noPostsMsg.textContent = "No posts found.";
+    noPostsMsg.className = "no-posts-message"
+    postsContainer.appendChild(noPostsMsg);
+  }
+
+  postsContainer.appendChild(createNewPostModal());
+  attachPostModalEvents();
+  bindNewPostFormSubmit();
+
+  const closeBtn = document.getElementById("closeNewPostModal");
+  closeBtn?.addEventListener("click", () => {
+    document.getElementById("newPostModal").classList.add("hidden");
+  });
+
+  const logoutBtn = document.getElementById("logout");
+  logoutBtn?.addEventListener("click", logout);
+}
+
+
+function createPosts(posts, postscontainer, possition) {
   for (let post of posts) {
     const div = document.createElement("div");
     div.className = "post";
@@ -242,19 +263,11 @@ export async function renderPosts() {
     div.appendChild(titleEl);
     div.appendChild(contentEl);
     div.appendChild(btn);
-
-    app.appendChild(div);
+    console.log("hello");
+    if (possition === "prepend") {
+      postscontainer.prepend(div);
+    } else {
+      postscontainer.appendChild(div);
+    }
   }
-
-  app.appendChild(createNewPostModal());
-  attachPostModalEvents();
-  bindNewPostFormSubmit();
-
-  const hiddencole = document.getElementById("closeNewPostModal");
-  hiddencole?.addEventListener('click', () => {
-    document.getElementById("newPostModal").classList.add("hidden");
-  });
-
-  const logoutbtn = document.getElementById("logout");
-  logoutbtn?.addEventListener('click', logout);
 }
