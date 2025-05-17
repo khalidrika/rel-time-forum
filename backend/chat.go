@@ -17,6 +17,7 @@ var upgrade = websocket.Upgrader{
 }
 
 type Message struct {
+	From    int    `json:"from"`
 	To      int    `json:"to"`
 	Content string `json:"content"`
 }
@@ -64,6 +65,8 @@ func (m *Manager) ChatHandler(w http.ResponseWriter, r *http.Request) {
 			log.Println("Invalid message format:", err)
 			continue
 		}
+
+		msg.From = client.Id
 
 		// Send to recipient and echo back to sender
 		m.broadcast(msg.To, msg)
@@ -134,4 +137,43 @@ func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(users)
+}
+func GetMessagesHandler(w http.ResponseWriter, r *http.Request) {
+    userID, err := GetUserIDFromRequest(r)
+    if err != nil {
+        ErrorHandler(w, "Unauthorized", http.StatusUnauthorized)
+        return
+    }
+
+    otherUserID := r.URL.Query().Get("userId")
+    if otherUserID == "" {
+        ErrorHandler(w, "Missing userId", http.StatusBadRequest)
+        return
+    }
+
+    rows, err := DB.Query(`
+        SELECT from_id, to_id, content 
+        FROM messages 
+        WHERE (from_id = ? AND to_id = ?) OR (from_id = ? AND to_id = ?)
+        ORDER BY created_at ASC
+    `, userID, otherUserID, otherUserID, userID)
+    if err != nil {
+        ErrorHandler(w, "Database error", http.StatusInternalServerError)
+        return
+    }
+    defer rows.Close()
+
+    var messages []map[string]interface{}
+    for rows.Next() {
+        var fromID, toID int
+        var content string
+        rows.Scan(&fromID, &toID, &content)
+        messages = append(messages, map[string]interface{}{
+            "from":    fromID,
+            "to":      toID,
+            "content": content,
+        })
+    }
+
+    json.NewEncoder(w).Encode(messages)
 }
