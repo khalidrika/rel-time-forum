@@ -1,5 +1,5 @@
 import { renderLoginForm, renderRegisterForm } from "./auth.js";
-import { renderUsers } from "./chat.js";
+import { loadCurrentUser, renderUsers } from "./chat.js";
 import { renderPosts } from "./post.js";
 import { socketEvent, UpgredConnetion } from "./ws.js";
 
@@ -12,7 +12,7 @@ window.addEventListener("DOMContentLoaded", () => {
     '/home': async () => {
       try {
         await renderPosts();
-        // creatpostform();
+        await loadCurrentUser();
         UpgredConnetion();
         socketEvent();
         renderUsers();

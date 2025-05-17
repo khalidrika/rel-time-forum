@@ -1,5 +1,16 @@
 import { socket } from "./ws.js";
 
+
+let currentUserId = null;
+
+export async function loadCurrentUser() {
+    const res = await fetch("/api/me");
+    if (res.ok) {
+        const user = await res.json();
+        currentUserId = user.id;
+    }
+}
+
 export async function renderUsers() {
     const res = await fetch("/api/users", {
         method: "GET",
@@ -20,7 +31,7 @@ export async function renderUsers() {
     usersContainer.appendChild(header);
 
     users?.forEach(user => {
-        console.log ("this is a new user");
+        console.log("this is a new user");
 
         const userItem = document.createElement("div");
         userItem.className = "user-item";
@@ -33,15 +44,13 @@ export async function renderUsers() {
 }
 
 
-export function openChatWindow(user) {
-    // Remove any existing chat box first
+export async function openChatWindow(user) {
     const existingChatBox = document.querySelector(".chat-box");
     if (existingChatBox) existingChatBox.remove();
 
     const chatBox = document.createElement("div");
     chatBox.className = "chat-box";
 
-    // Header with Close Button
     const header = document.createElement("div");
     header.className = "chat-header";
     header.textContent = `Chat with ${user.nickname}`;
@@ -50,18 +59,25 @@ export function openChatWindow(user) {
     closeButton.textContent = "×";
     closeButton.className = "chat-close-button";
     closeButton.style.cursor = "pointer";
-    closeButton.style.marginLeft = "10px";
     closeButton.addEventListener("click", () => chatBox.remove());
-
     header.appendChild(closeButton);
     chatBox.appendChild(header);
 
-    // Messages Area
     const messages = document.createElement("div");
     messages.className = "messages";
     chatBox.appendChild(messages);
 
-    // Input + Send Button
+    // جلب الرسائل القديمة
+    const res = await fetch(`/api/messages?userId=${user.id}`);
+    if (res.ok) {
+        const history = await res.json();
+        history.forEach(msg => {
+            const msgEl = document.createElement("p");
+            msgEl.textContent = msg.content;
+            messages.appendChild(msgEl);
+        });
+    }
+
     const input = document.createElement("input");
     input.type = "text";
     input.placeholder = "Type a message...";
@@ -70,19 +86,18 @@ export function openChatWindow(user) {
     const sendButton = document.createElement("button");
     sendButton.textContent = "Send";
     sendButton.addEventListener("click", () => {
-        // console.log("*******************",user);
-
         const message = input.value.trim();
         if (!message) return;
-        console.log(`Sending message to ${user.nickname}:`, input.value);
         socket.send(JSON.stringify({
             to: user.id,
             content: message
-        }))
+        }));
+        const msgEl = document.createElement("p");
+        msgEl.textContent = message;
+        messages.appendChild(msgEl);
         input.value = "";
     });
     chatBox.appendChild(sendButton);
 
     document.getElementById("app").appendChild(chatBox);
 }
-

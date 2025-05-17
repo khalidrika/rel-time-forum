@@ -16,17 +16,25 @@ const input = document.getElementById("inpuut");
 
 //     socket.send(msg.value)
 // });
-
-
 export function socketEvent() {
     socket.onopen = () => {
         console.log("connection is open");
     }
-    socket.onmessage = (e) => {
-        console.log("dd", e.data);
 
+    socket.onmessage = (e) => {
+        const msg = JSON.parse(e.data);
+
+        const activeChat = document.querySelector(".chat-box .messages");
+        if (activeChat) {
+            const msgEl = document.createElement("p");
+            msgEl.textContent = msg.content;
+            activeChat.appendChild(msgEl);
+        } else {
+            console.log("No active chat window to display the message");
+        }
     }
+
     socket.onclose = () => {
-        socket = null
+        socket = null;
     };
 }
