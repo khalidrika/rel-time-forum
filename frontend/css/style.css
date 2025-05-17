@@ -13,6 +13,7 @@ body {
     -webkit-tap-highlight-color: transparent;
 }
 
+
 /* Fixed Header */
 #main-header {
     position: fixed;
@@ -437,4 +438,9 @@ body {
     --red-color: red;
     --orange: orange;
     --orange-hvr: rgb(255, 72, 0);
+}
+
+.userp span {
+    font-weight: bolder;
+    font-size: 20px;
 }

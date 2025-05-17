@@ -176,9 +176,14 @@ export async function renderPosts() {
 
   const app = document.getElementById("app");
   app.innerHTML = "";
+  const userP = document.createElement("p");
+  userP.className = "userp";
+  app.appendChild(userP);
+
+  const username = localStorage.getItem("username");
+  userP.innerHTML = `Welcome <span>${username}</span>`;
 
   const header = document.createElement("h2");
-  header.textContent = "Posts Feed";
   app.appendChild(header);
 
   const addButton = document.createElement("button");

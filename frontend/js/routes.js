@@ -1,7 +1,7 @@
 import { renderLoginForm, renderRegisterForm } from "./auth.js";
 import { renderUsers } from "./chat.js";
 import { renderPosts } from "./post.js";
-import { socketEvent, UpgredConnetion } from "./ws.js";
+import { socketEvent, UpgradeConnetion } from "./ws.js";
 
 let routes = {};
 
@@ -13,7 +13,7 @@ window.addEventListener("DOMContentLoaded", () => {
       try {
         await renderPosts();
         // creatpostform();
-        UpgredConnetion();
+        UpgradeConnetion();
         socketEvent();
         renderUsers();
       } catch (error) {
@@ -40,12 +40,10 @@ async function checkSessionAndRedirect() {
   }
 }
 
-
 export function navigate(path) {
   history.pushState({}, '', path);
   renderPage(path);
 }
-
 
 export function renderPage(path) {
   if (routes[path]) {
@@ -57,7 +55,6 @@ export function renderPage(path) {
   }
 
 }
-
 
 window.addEventListener('popstate', () => {
   console.log("-----------------a");

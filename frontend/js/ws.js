@@ -1,9 +1,9 @@
 export let socket = null
-export function UpgredConnetion() {
-    if (socket !== null){
+export function UpgradeConnetion() {
+    if (socket !== null) {
         return
     }
-    const host = window.location.origin.split("//");   
+    const host = window.location.origin.split("//");
     socket = new WebSocket(`ws://${host[1]}/ws`);
 }
 
@@ -17,6 +17,7 @@ const input = document.getElementById("inpuut");
 //     socket.send(msg.value)
 // });
 
+let history = [];
 
 export function socketEvent() {
     socket.onopen = () => {
@@ -25,8 +26,19 @@ export function socketEvent() {
     socket.onmessage = (e) => {
         const data = JSON.parse(e.data);
         const username = localStorage.getItem("username");
-        console.log("LS:", username);
         if (data.to === username) {
+            history.push({from: data.from, content: data.content});
+            const msgDiv = document.createElement("div");
+            msgDiv.className = "chat-message incoming";
+            msgDiv.innerHTML = `
+            <strong>${data.from}: </strong> ${data.content}
+            `;
+
+            if (document.getElementsByClassName(".chat-box")) {
+                const chatBox = document.querySelector(".messages");
+                chatBox.appendChild(msgDiv);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
         }
     }
     socket.onclose = () => {
