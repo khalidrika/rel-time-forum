@@ -1,6 +1,7 @@
 import { navigate } from "./routes.js";
 import { renderPosts } from "./post.js";
 import { socket } from "./ws.js";
+export let username;
 export function renderLoginForm() {
   const form = `
   <div class="modal-overlay">
@@ -49,11 +50,11 @@ export function renderLoginForm() {
 
     const data = await res.json();
     if (!res.ok) {
-      console.log("WWWWWWW");
       document.getElementById("error").textContent = data.error || "Login failed";
-
       return;
     }
+    username = data.username;
+    localStorage.setItem("username", username);
 
     navigate("/home")
 

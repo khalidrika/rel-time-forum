@@ -1,3 +1,4 @@
+import { logout } from "./auth.js";
 import { socket } from "./ws.js";
 
 export async function renderUsers() {
@@ -74,11 +75,37 @@ export function openChatWindow(user) {
 
         const message = input.value.trim();
         if (!message) return;
-        console.log(`Sending message to ${user.nickname}:`, input.value);
+        const msgDiv = document.createElement("div");
+        msgDiv.textContent = "you: " + message;
+        messages.appendChild(msgDiv);
+        messages.scrollTop = messages.scrollHeight;
+        const tokens = document.cookie.split('; ');
+        let tokenValue = {}
+        for (let i = 0; i < tokens.length; i++) {
+            let [key, value] = tokens[i].split("=")
+            tokenValue[key] = value
+        }
+        const from = localStorage.getItem("username");
+        if (!from) {
+            logout();
+            return
+        }
+
+        // console.log(`Sending message to ${user.nickname}:`, input.value);
+        console.log("message", {
+            from: from,
+            to: user.nickname,
+            content: message,
+            token: tokenValue["session_token"]
+        });
+
         socket.send(JSON.stringify({
-            to: user.id,
-            content: message
-        }))
+            from: from,
+            to: user.nickname,
+            content: message,
+            token: tokenValue["session_token"]
+        }));
+
         input.value = "";
     });
     chatBox.appendChild(sendButton);

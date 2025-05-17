@@ -2,6 +2,7 @@ package backend
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -11,14 +12,17 @@ import (
 var upgrade = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
-	CheckOrigin: func(r *http.Request) bool {
-		return true
-	},
 }
 
 type Message struct {
-	To      int    `json:"to"`
+	From    string `json:"from"`
+	To      string `json:"to"`
 	Content string `json:"content"`
+	Token   string `json:"token"`
+}
+
+type Err struct {
+	Error string `json:"error"`
 }
 
 func (m *Manager) ChatHandler(w http.ResponseWriter, r *http.Request) {
@@ -27,91 +31,59 @@ func (m *Manager) ChatHandler(w http.ResponseWriter, r *http.Request) {
 		ErrorHandler(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
-
-	var id int
-	var nickname string
+	id := 0
+	nickname := ""
 	err = DB.QueryRow(`
-		SELECT u.id, u.nickname
-		FROM users u 
-		JOIN sessions s ON u.id = s.user_id 
-		WHERE s.token = ? 
+	SELECT u.id, u.nickname
+	FROM users u 
+	JOIN sessions s ON u.id = s.user_id 
+	WHERE s.token = ? 
 	`, cookie.Value).Scan(&id, &nickname)
-	if err != nil {
-		ErrorHandler(w, "Failed to validate session", http.StatusUnauthorized)
-		return
-	}
+
+	log.Println("---------------------88", id, nickname)
 
 	conn, err := upgrade.Upgrade(w, r, nil)
 	if err != nil {
-		ErrorHandler(w, "Failed to upgrade connection", http.StatusInternalServerError)
+		ErrorHandler(w, "Internal server Error", http.StatusInternalServerError)
 		return
 	}
-
+	var msg Message
 	client := NewClient(id, nickname, cookie.Value, conn)
 	m.addclient(client)
-	log.Printf("User %s connected, active connections: %d", nickname, len(m.Users[id]))
-
-	var msg Message
+	log.Println(len(m.Users[nickname]))
 	for {
-		_, payload, err := conn.ReadMessage()
+		_, pyload, err := conn.ReadMessage()
 		if err != nil {
-			log.Printf("Connection closed for user %d", client.Id)
-			m.removeclient(client)
 			break
 		}
-
-		if err := json.Unmarshal(payload, &msg); err != nil {
-			log.Println("Invalid message format:", err)
-			continue
+		if err := json.Unmarshal(pyload, &msg); err != nil {
+			log.Println("unmarshal err:", err)
 		}
-
-		// Send to recipient and echo back to sender
+		fmt.Println("user id", msg.To)
+		if client.Token != msg.Token {
+			var errr Err
+			errr.Error = "Unauthorized"
+			m.broadcast(client.Nickname, errr)
+			return
+		}
 		m.broadcast(msg.To, msg)
-		m.broadcast(client.Id, msg)
+		m.broadcast(client.Nickname, msg)
 	}
 }
 
-func (m *Manager) broadcast(id int, message Message) {
-	clients, ok := m.Users[id]
-	if !ok || len(clients) == 0 {
-		log.Printf("No active clients for user %d", id)
-		return
-	}
-
-	for _, client := range clients {
-		err := client.Conn.WriteJSON(message)
-		if err != nil {
-			log.Println("Failed to send message:", err)
-		}
-	}
-}
-
-func (m *Manager) removeclient(c *Client) {
-	clients, ok := m.Users[c.Id]
-	if !ok {
-		return
-	}
-
-	for i, client := range clients {
-		if client == c {
-			m.Users[c.Id] = append(clients[:i], clients[i+1:]...)
-			break
-		}
-	}
-
-	// Cleanup if no more connections for user
-	if len(m.Users[c.Id]) == 0 {
-		delete(m.Users, c.Id)
+func (m Manager) broadcast(nickname string, message any) {
+	fmt.Println(message)
+	for _, Clientcoon := range m.Users[nickname] {
+		Clientcoon.Conn.WriteJSON(message)
 	}
 }
 
 func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := GetUserIDFromRequest(r)
 	if err != nil {
-		ErrorHandler(w, "Unauthorized", http.StatusUnauthorized)
+		log.Println("failed to get user id from seesion:", err)
 		return
 	}
-
 	rows, err := DB.Query("SELECT id, nickname FROM users WHERE id <> ?", id)
 	if err != nil {
 		ErrorHandler(w, "Database error", http.StatusInternalServerError)
@@ -121,13 +93,13 @@ func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 
 	var users []map[string]interface{}
 	for rows.Next() {
-		var userID int
+		var id int
 		var nickname string
-		if err := rows.Scan(&userID, &nickname); err != nil {
+		if err := rows.Scan(&id, &nickname); err != nil {
 			continue
 		}
 		users = append(users, map[string]interface{}{
-			"id":       userID,
+			"id":       id,
 			"nickname": nickname,
 		})
 	}

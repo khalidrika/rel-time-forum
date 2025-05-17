@@ -19,7 +19,7 @@ type LoginRequest struct {
 
 // name for welcome
 type LoginResponse struct {
-	Name string `json:"name"`
+	Name string `json:"username"`
 }
 
 // regester response
@@ -65,12 +65,12 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	var (
 		id       int
-		first    string
+		username string
 		password string
 	)
 
 	row := DB.QueryRow("SELECT id, nickname, password FROM users WHERE nickname = ? OR email = ?", req.Identifier, req.Identifier)
-	err := row.Scan(&id, &first, &password)
+	err := row.Scan(&id, &username, &password)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ErrorHandler(w, "User not found", http.StatusUnauthorized)
@@ -94,10 +94,10 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	http.SetCookie(w, &http.Cookie{
-		Name:     "session_token",
-		Value:    token,
-		Expires:  expiresAt,
-		HttpOnly: true, // XSS
+		Name:    "session_token",
+		Value:   token,
+		Expires: expiresAt,
+		// HttpOnly: true, // XSS
 		Path:     "/",
 		Secure:   true,
 		SameSite: http.SameSiteLaxMode, // CSRF
@@ -105,7 +105,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	})
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(LoginResponse{Name: first})
+	json.NewEncoder(w).Encode(LoginResponse{Name: username})
 }
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {

@@ -6,7 +6,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type Clients map[int][]*Client
+type Clients map[string][]*Client
 
 type Client struct {
 	Id       int
@@ -36,5 +36,5 @@ func NewClient(id int, nickname, token string, conn *websocket.Conn) *Client {
 }
 
 func (m *Manager) addclient(c *Client) {
-	m.Users[c.Id] = append(m.Users[c.Id], c)
+	m.Users[c.Nickname] = append(m.Users[c.Nickname], c)
 }

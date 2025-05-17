@@ -23,8 +23,11 @@ export function socketEvent() {
         console.log("connection is open");
     }
     socket.onmessage = (e) => {
-        console.log("dd", e.data);
-
+        const data = JSON.parse(e.data);
+        const username = localStorage.getItem("username");
+        console.log("LS:", username);
+        if (data.to === username) {
+        }
     }
     socket.onclose = () => {
         socket = null
