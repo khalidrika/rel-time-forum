@@ -21,7 +21,7 @@ export async function renderUsers() {
     usersContainer.appendChild(header);
 
     users?.forEach(user => {
-        console.log ("this is a new user");
+        console.log("this is a new user");
 
         const userItem = document.createElement("div");
         userItem.className = "user-item";
@@ -71,7 +71,6 @@ export function openChatWindow(user) {
     const sendButton = document.createElement("button");
     sendButton.textContent = "Send";
     sendButton.addEventListener("click", () => {
-        // console.log("*******************",user);
 
         const message = input.value.trim();
         if (!message) return;
@@ -113,3 +112,28 @@ export function openChatWindow(user) {
     document.getElementById("app").appendChild(chatBox);
 }
 
+
+
+export function sendMessage(receiverId, content) {
+    const cookies = document.cookie.split("=");
+
+
+    if (cookies[0] === "session_id" && cookies[1]) {
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            let receiver = document.querySelector(`li[data-id="${receiverId}"]`);
+            let onlineUserList = document.querySelector("#onlineUserList")
+
+            onlineUserList.prepend(receiver)
+
+            socket.send(JSON.stringify({
+                receiver_id: receiverId,
+                content: content,
+                cookie: cookies[1]
+            }));
+        }
+    } else {
+        currentUserId = null
+        socket.close()
+        navigateTo("/login")
+    }
+}

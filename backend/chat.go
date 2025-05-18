@@ -40,8 +40,6 @@ func (m *Manager) ChatHandler(w http.ResponseWriter, r *http.Request) {
 	WHERE s.token = ? 
 	`, cookie.Value).Scan(&id, &nickname)
 
-	log.Println("---------------------88", id, nickname)
-
 	conn, err := upgrade.Upgrade(w, r, nil)
 	if err != nil {
 		ErrorHandler(w, "Internal server Error", http.StatusInternalServerError)
@@ -50,7 +48,6 @@ func (m *Manager) ChatHandler(w http.ResponseWriter, r *http.Request) {
 	var msg Message
 	client := NewClient(id, nickname, cookie.Value, conn)
 	m.addclient(client)
-	log.Println(len(m.Users[nickname]))
 	for {
 		_, pyload, err := conn.ReadMessage()
 		if err != nil {
@@ -72,7 +69,7 @@ func (m *Manager) ChatHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m Manager) broadcast(nickname string, message any) {
-	fmt.Println(message)
+	fmt.Println("ton:", message)
 	for _, Clientcoon := range m.Users[nickname] {
 		Clientcoon.Conn.WriteJSON(message)
 	}
