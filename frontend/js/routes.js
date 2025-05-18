@@ -32,7 +32,7 @@ async function checkSessionAndRedirect() {
       return
     } else {
       navigate("/home");
-      console.log("hna");
+      // console.log("hna");
     }
   } catch (err) {
     console.error("Session check failed:", err)

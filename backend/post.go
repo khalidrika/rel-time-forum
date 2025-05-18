@@ -2,7 +2,6 @@ package backend
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -51,7 +50,6 @@ func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("heeey")
 	if r.Method != http.MethodPost {
 		ErrorHandler(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -108,7 +106,7 @@ func AddCommentHandler(w http.ResponseWriter, r *http.Request) {
 	if postID == "" {
 		ErrorHandler(w, "missing posted", http.StatusBadRequest)
 		return
-	}			
+	}
 
 	var body struct {
 		content string `json:"content"`

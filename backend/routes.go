@@ -22,5 +22,6 @@ func Routes() http.Handler {
 	mux.HandleFunc("/", HomeHandler)
 	mux.HandleFunc("/ws", manager.ChatHandler)
 	mux.HandleFunc("/api/users", GetUsersHandler)
+	mux.HandleFunc("/api/messages", GetMessagesHandler)
 	return mux
 }

@@ -97,7 +97,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		Name:     "session_token",
 		Value:    token,
 		Expires:  expiresAt,
-		HttpOnly: true, // XSS
 		Path:     "/",
 		Secure:   true,
 		SameSite: http.SameSiteLaxMode, // CSRF
