@@ -1,9 +1,9 @@
 export let socket = null
 export function UpgredConnetion() {
-    if (socket !== null){
+    if (socket !== null) {
         return
     }
-    const host = window.location.origin.split("//");   
+    const host = window.location.origin.split("//");
     socket = new WebSocket(`ws://${host[1]}/ws`);
 }
 
@@ -24,17 +24,30 @@ export function socketEvent() {
     socket.onmessage = (e) => {
         const msg = JSON.parse(e.data);
 
-        const activeChat = document.querySelector(".chat-box .messages");
-        if (activeChat) {
-            const msgEl = document.createElement("p");
-            msgEl.textContent = msg.content;
-            activeChat.appendChild(msgEl);
+        const senderchat = document.getElementById(`${msg.to}`);
+        const receivechat = document.getElementById(`${msg.from}`);
+        // console.log(activeChat);
+        if (senderchat) {
+            writeMessage(senderchat, msg);
+
+        } else if (receivechat) {
+            writeMessage(receivechat, msg);
         } else {
             console.log("No active chat window to display the message");
         }
     }
-
     socket.onclose = () => {
         socket = null;
     };
+}
+function writeMessage(parent, msg) {
+
+    const msgEl = document.createElement("p");
+    msgEl.textContent = msg.content;
+    parent.children[1].appendChild(msgEl);
+
+    const existinNoPostMsg = document.querySelector(".empty-msg")
+    if (existinNoPostMsg) {
+        existinNoPostMsg.remove();
+    }
 }

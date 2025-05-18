@@ -1,6 +1,6 @@
 import { logout } from "./auth.js";
-import { renderUsers } from "./chat.js";
 import { navigate } from "./routes.js";
+import { currentUserNickname } from "./chat.js";
 
 
 export function createNewPostModal() {
@@ -86,15 +86,21 @@ export async function bindNewPostFormSubmit() {
       body: JSON.stringify(payload)
     });
     const data = await res.json()
-    console.log([data]);
+    // console.log([data]);
 
     if (res.ok) {
       console.log("Post created successfully");
+
+      document.getElementById("formPostTitle").value = "";
+      document.getElementById("formPostContent").value = "";
+
+
       document.getElementById("newPostModal").classList.add("hidden");
       const existinNoPostMsg = document.querySelector(".no-posts-message")
       if (existinNoPostMsg) {
         existinNoPostMsg.remove();
       }
+      data.nickname = currentUserNickname;
       createPosts([data], document.querySelector(".postscontainer"), "prepend")
     } else {
       console.error("Failed to create post");
@@ -234,6 +240,8 @@ function createPosts(posts, postscontainer, possition) {
 
     const nicknameEl = document.createElement("strong");
     nicknameEl.textContent = `By: ${post.nickname}`;
+    // console.log(post.nickname);
+
 
     const dateEl = document.createElement("em");
     dateEl.textContent = new Date(post.createdAt).toLocaleString();
@@ -263,7 +271,7 @@ function createPosts(posts, postscontainer, possition) {
     div.appendChild(titleEl);
     div.appendChild(contentEl);
     div.appendChild(btn);
-    console.log("hello");
+    // console.log("hello");
     if (possition === "prepend") {
       postscontainer.prepend(div);
     } else {

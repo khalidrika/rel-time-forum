@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -17,6 +19,7 @@ var upgrade = websocket.Upgrader{
 }
 
 type Message struct {
+	Tocken  string `json:"tocken"`
 	From    int    `json:"from"`
 	To      int    `json:"to"`
 	Content string `json:"content"`
@@ -33,7 +36,7 @@ func (m *Manager) ChatHandler(w http.ResponseWriter, r *http.Request) {
 	var nickname string
 	err = DB.QueryRow(`
 		SELECT u.id, u.nickname
-		FROM users u 
+		FROM users u
 		JOIN sessions s ON u.id = s.user_id 
 		WHERE s.token = ? 
 	`, cookie.Value).Scan(&id, &nickname)
@@ -67,15 +70,34 @@ func (m *Manager) ChatHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		msg.From = client.Id
-
+		if msg.Tocken != client.Token {
+			log.Println("not same")
+			return
+		}
 		// Send to recipient and echo back to sender
-		m.broadcast(msg.To, msg)
-		m.broadcast(client.Id, msg)
+		err = IncertMsg(msg.Content, client.Id, msg.To)
+		if err == nil {
+			m.broadcast(msg.To, msg)
+			m.broadcast(client.Id, msg)
+		} else {
+			log.Println("failde to insert:", err)
+			msg.Content = ""
+			m.broadcast(client.Id, msg)
+		}
 	}
+}
+
+func IncertMsg(msg string, from, to int) error {
+	_, err := DB.Exec(`
+	INSERT INTO messages
+	(sender_id, receiver_id, content, created_at) VALUES (?, ?, ?, ?)
+	`, from, to, msg, time.Now())
+	return err
 }
 
 func (m *Manager) broadcast(id int, message Message) {
 	clients, ok := m.Users[id]
+
 	if !ok || len(clients) == 0 {
 		log.Printf("No active clients for user %d", id)
 		return
@@ -138,42 +160,52 @@ func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(users)
 }
+
 func GetMessagesHandler(w http.ResponseWriter, r *http.Request) {
-    userID, err := GetUserIDFromRequest(r)
-    if err != nil {
-        ErrorHandler(w, "Unauthorized", http.StatusUnauthorized)
-        return
-    }
+	userID, err := GetUserIDFromRequest(r)
+	if err != nil {
+		ErrorHandler(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
 
-    otherUserID := r.URL.Query().Get("userId")
-    if otherUserID == "" {
-        ErrorHandler(w, "Missing userId", http.StatusBadRequest)
-        return
-    }
+	otherUserIDStr := r.URL.Query().Get("userId")
+	if otherUserIDStr == "" {
+		ErrorHandler(w, "Missing userId", http.StatusBadRequest)
+		return
+	}
 
-    rows, err := DB.Query(`
-        SELECT from_id, to_id, content 
+	otherUserID, err := strconv.Atoi(otherUserIDStr)
+	if err != nil {
+		ErrorHandler(w, "Invalid userId", http.StatusBadRequest)
+		return
+	}
+
+	rows, err := DB.Query(`
+        SELECT sender_id, receiver_id, content 
         FROM messages 
-        WHERE (from_id = ? AND to_id = ?) OR (from_id = ? AND to_id = ?)
+        WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)
         ORDER BY created_at ASC
     `, userID, otherUserID, otherUserID, userID)
-    if err != nil {
-        ErrorHandler(w, "Database error", http.StatusInternalServerError)
-        return
-    }
-    defer rows.Close()
+	if err != nil {
+		ErrorHandler(w, "Database error", http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
 
-    var messages []map[string]interface{}
-    for rows.Next() {
-        var fromID, toID int
-        var content string
-        rows.Scan(&fromID, &toID, &content)
-        messages = append(messages, map[string]interface{}{
-            "from":    fromID,
-            "to":      toID,
-            "content": content,
-        })
-    }
+	var messages []map[string]interface{}
+	for rows.Next() {
+		var senderID, receiverID int
+		var content string
+		if err := rows.Scan(&senderID, &receiverID, &content); err != nil {
+			continue
+		}
+		messages = append(messages, map[string]interface{}{
+			"from":    senderID,
+			"to":      receiverID,
+			"content": content,
+		})
+	}
 
-    json.NewEncoder(w).Encode(messages)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(messages)
 }

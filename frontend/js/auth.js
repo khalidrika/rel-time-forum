@@ -160,12 +160,8 @@ async function handleRegister(e) {
 
 export async function logout() {
   const res = await fetch('/api/logout', { method: 'POST' });
-  if (res.ok) {
     // alert('Logged out successfully!');
     // window.location.reload();
     navigate("/login");
     socket.close()
-  } else {
-    alert('Failde to logout.');
-  }
 }
