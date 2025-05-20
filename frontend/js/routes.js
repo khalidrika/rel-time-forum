@@ -32,7 +32,6 @@ async function checkSessionAndRedirect() {
       return
     } else {
       navigate("/home");
-      // console.log("hna");
     }
   } catch (err) {
     console.error("Session check failed:", err)
@@ -49,19 +48,14 @@ export function navigate(path) {
 
 export function renderPage(path) {
   if (routes[path]) {
-    // console.log("2", path);
     routes[path]()
-    // navigate(path)
   } else {
     navigate("/login")
   }
 
 }
 
-
 window.addEventListener('popstate', () => {
-  console.log("-----------------a");
+  console.log("-----------------1a");
   checkSessionAndRedirect()
-  // renderPage(window.location.pathname);
-  
 })

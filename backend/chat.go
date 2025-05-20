@@ -19,10 +19,11 @@ var upgrade = websocket.Upgrader{
 }
 
 type Message struct {
-	Tocken  string `json:"tocken"`
-	From    int    `json:"from"`
-	To      int    `json:"to"`
-	Content string `json:"content"`
+	Token      string    `json:"token"`
+	From       int       `json:"from"`
+	To         int       `json:"to"`
+	Content    string    `json:"content"`
+	Created_at time.Time `json:"createdat"`
 }
 
 func (m *Manager) ChatHandler(w http.ResponseWriter, r *http.Request) {
@@ -54,7 +55,6 @@ func (m *Manager) ChatHandler(w http.ResponseWriter, r *http.Request) {
 	client := NewClient(id, nickname, cookie.Value, conn)
 	m.addclient(client)
 	log.Printf("User %s connected, active connections: %d", nickname, len(m.Users[id]))
-
 	var msg Message
 	for {
 		_, payload, err := conn.ReadMessage()
@@ -70,13 +70,14 @@ func (m *Manager) ChatHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		msg.From = client.Id
-		if msg.Tocken != client.Token {
+		if msg.Token != client.Token {
 			log.Println("not same")
 			return
 		}
 		// Send to recipient and echo back to sender
-		err = IncertMsg(msg.Content, client.Id, msg.To)
+		err = InsertMsg(msg.Content, client.Id, msg.To)
 		if err == nil {
+			msg.Created_at = time.Now()
 			m.broadcast(msg.To, msg)
 			m.broadcast(client.Id, msg)
 		} else {
@@ -87,7 +88,7 @@ func (m *Manager) ChatHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func IncertMsg(msg string, from, to int) error {
+func InsertMsg(msg string, from, to int) error {
 	_, err := DB.Exec(`
 	INSERT INTO messages
 	(sender_id, receiver_id, content, created_at) VALUES (?, ?, ?, ?)
