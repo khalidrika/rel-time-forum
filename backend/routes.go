@@ -21,6 +21,7 @@ func Routes() http.Handler {
 	mux.HandleFunc("/api/add-comment", CreateCommentHandler)
 	mux.HandleFunc("/", HomeHandler)
 	mux.HandleFunc("/ws", manager.ChatHandler)
+	mux.HandleFunc("/messages", manager.Messages)
 	mux.HandleFunc("/api/users", GetUsersHandler)
 	return mux
 }

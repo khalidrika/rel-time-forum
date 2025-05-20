@@ -74,6 +74,7 @@ export function openChatWindow(user) {
 
         const message = input.value.trim();
         if (!message) return;
+        storeMsg(user.id, message)
         const msgDiv = document.createElement("div");
         msgDiv.textContent = "you: " + message;
         messages.appendChild(msgDiv);
@@ -90,14 +91,6 @@ export function openChatWindow(user) {
             return
         }
 
-        // console.log(`Sending message to ${user.nickname}:`, input.value);
-        console.log("message", {
-            from: from,
-            to: user.nickname,
-            content: message,
-            token: tokenValue["session_token"]
-        });
-
         socket.send(JSON.stringify({
             from: from,
             to: user.nickname,
@@ -112,28 +105,29 @@ export function openChatWindow(user) {
     document.getElementById("app").appendChild(chatBox);
 }
 
+export async function storeMsg(receiverId, content, token) {
+    const sender = localStorage.getItem("username");
+    if (!sender) return;
 
-
-export function sendMessage(receiverId, content) {
-    const cookies = document.cookie.split("=");
-
-
-    if (cookies[0] === "session_id" && cookies[1]) {
-        if (socket && socket.readyState === WebSocket.OPEN) {
-            let receiver = document.querySelector(`li[data-id="${receiverId}"]`);
-            let onlineUserList = document.querySelector("#onlineUserList")
-
-            onlineUserList.prepend(receiver)
-
-            socket.send(JSON.stringify({
-                receiver_id: receiverId,
+    try {
+        const res = await fetch("/api/messages", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "include", // Ensure the session cookie is included
+            body: JSON.stringify({
+                from: sender,
+                to: receiverId,
                 content: content,
-                cookie: cookies[1]
-            }));
+                token: token
+            })
+        });
+
+        if (!res.ok) {
+            console.error("Failed to store message", await res.text());
         }
-    } else {
-        currentUserId = null
-        socket.close()
-        navigateTo("/login")
+    } catch (err) {
+        console.error("Error storing message:", err);
     }
 }
