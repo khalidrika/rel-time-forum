@@ -74,7 +74,6 @@ export function openChatWindow(user) {
 
         const message = input.value.trim();
         if (!message) return;
-        storeMsg(user.id, message)
         const msgDiv = document.createElement("div");
         msgDiv.textContent = "you: " + message;
         messages.appendChild(msgDiv);
@@ -90,6 +89,8 @@ export function openChatWindow(user) {
             logout();
             return
         }
+
+        storeMsg(user.id, message, tokenValue["session_token"])
 
         socket.send(JSON.stringify({
             from: from,

@@ -2,10 +2,12 @@ package backend
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 )
 
 func (m *Manager) Messages(w http.ResponseWriter, r *http.Request) {
+	log.Println("beast")
 	// Check for authentication cookie
 	cookie, err := r.Cookie("session_token")
 	if err != nil {
