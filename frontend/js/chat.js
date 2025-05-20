@@ -32,18 +32,22 @@ export async function renderUsers() {
     const header = document.createElement("h2");
     header.textContent = "Online Users";
     usersContainer.appendChild(header);
-
-    users?.forEach(user => {
-        console.log(user);
-
-        // console.log("this is a new user");
-
-        const userItem = document.createElement("div");
-        userItem.className = "user-item";
-        userItem.textContent = user.nickname;
-        userItem.addEventListener("click", () => openChatWindow(user));
-        usersContainer.appendChild(userItem);
-    });
+    
+    if (users === null) {
+        const noUser = document.createElement("p")
+        noUser.id = "nousers"
+        noUser.textContent = "No Users found"
+        usersContainer.appendChild(noUser)
+    }else{
+        users?.forEach(user => {
+            // console.log(user);
+            const userItem = document.createElement("div");
+            userItem.className = "user-item";
+            userItem.textContent = user.nickname;
+            userItem.addEventListener("click", () => openChatWindow(user));
+            usersContainer.appendChild(userItem);
+        });
+    }
 
     document.getElementById("app").prepend(usersContainer);
 }
@@ -73,21 +77,6 @@ export async function openChatWindow(user) {
     messages.className = "messages";
     chatBox.appendChild(messages);
 
-    // const res = await fetch(`/api/messages?userId=${user.id}`);
-    // const text = await res.text();
-    // console.log("Raw Response:", text);
-    // if (!res.ok) {
-    //     console.error(`Failed to load messages: ${res.status} ${res.statusText}`);
-    //     return;
-    // }
-
-    // let history = [];
-    // try {
-    //     history = JSON.parse(text);
-    // } catch (e) {
-    //     console.error("Invalid JSON response", e);
-    //     return;
-    // }
     const res = await fetch(`/api/messages?userId=${user.id}`);
 
     if (!res.ok) {
@@ -114,11 +103,20 @@ export async function openChatWindow(user) {
         emptyMsg.className = "empty-msg"
         messages.appendChild(emptyMsg);
     } else {
-        history.forEach(msg => {
-            const msgEl = document.createElement("p");
-            msgEl.textContent = msg.content;
-            messages.appendChild(msgEl);
-        });
+history.forEach(msg => {
+    const msgEl = document.createElement("div");
+    msgEl.className = "message";
+    msgEl.textContent = msg.content;
+
+    if (msg.from === currentUserId) {
+        msgEl.classList.add("sent");
+    } else {
+        msgEl.classList.add("received");
+    }
+
+    messages.appendChild(msgEl);
+});
+
     }
 
 
@@ -127,9 +125,9 @@ export async function openChatWindow(user) {
     input.placeholder = "Type a message...";
     chatBox.appendChild(input);
 
-    const tockens = document.cookie.split("; ");
+    const tokens = document.cookie.split("; ");
     let oldtoken = {}
-    for (let token of tockens) {
+    for (let token of tokens) {
         let [key, value] = token.split("=")
         oldtoken[key] = value
     }
@@ -137,9 +135,9 @@ export async function openChatWindow(user) {
     const sendButton = document.createElement("button");
     sendButton.textContent = "Send";
     sendButton.addEventListener("click", () => {
-        const tockens = document.cookie.split("; ");
+        const tokens = document.cookie.split("; ");
         let newtoken = {}
-        for (let token of tockens) {
+        for (let token of tokens) {
             let [key, value] = token.split("=")
             newtoken[key] = value
         }
@@ -150,7 +148,7 @@ export async function openChatWindow(user) {
         if (!message) return;
         socket.send(JSON.stringify({
             to: user.id,
-            tocken: newtoken["session_token"],
+            token: newtoken["session_token"],
             content: message
         }));
         input.value = "";

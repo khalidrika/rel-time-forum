@@ -9,13 +9,6 @@ export function UpgredConnetion() {
 
 const input = document.getElementById("inpuut");
 
-// input.addEventListener("submit", (e) => {
-//     e.preventDefault();
-//     const msg = document.querySelector("#msg")
-//     console.log(msg);
-
-//     socket.send(msg.value)
-// });
 export function socketEvent() {
     socket.onopen = () => {
         console.log("connection is open");
@@ -41,9 +34,21 @@ export function socketEvent() {
     };
 }
 function writeMessage(parent, msg) {
-
-    const msgEl = document.createElement("p");
+    console.log(msg);
+    const msgEl = document.createElement("div");
+    msgEl.className = "message";
     msgEl.textContent = msg.content;
+    const createdAt = document.createElement("span")
+    createdAt.className = "created"
+    createdAt.textContent = msg.createdat.split('.')[0]
+    msgEl.appendChild(createdAt)
+
+    if (msg.from === parseInt(parent.id)) {
+        msgEl.classList.add("received");
+    } else {
+        msgEl.classList.add("sent");
+    }
+
     parent.children[1].appendChild(msgEl);
 
     const existinNoPostMsg = document.querySelector(".empty-msg")

@@ -3,14 +3,41 @@ body {
     font-family: Arial, sans-serif;
     text-align: center;
     background-color: var(--body-bg);
-    padding-top: 70px; /* Space for fixed header */
+    padding-top: 70px;
+    /* Space for fixed header */
 }
+.created {
+    font-size: 7px;
 
+}
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
+}
+
+.message {
+    max-width: 70%;
+    margin: 5px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    display: inline-block;
+    clear: both;
+}
+
+.message.sent {
+    background-color: #d4edda;
+    color: #155724;
+    float: right;
+    text-align: right;
+}
+
+.message.received {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    float: left;
+    text-align: left;
 }
 
 /* Fixed Header */
@@ -48,7 +75,8 @@ body {
 }
 
 /* Modal Overlay */
-.modal-overlay, .modal {
+.modal-overlay,
+.modal {
     position: fixed;
     top: 0;
     left: 0;
@@ -108,6 +136,15 @@ body {
 /* ========================== */
 
 .chat-box {
+    width: 500px;
+    height: 500px;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #fff;
+    border: 1px solid #ccc;
+    display: flex;
+    flex-direction: column;
     position: fixed;
     bottom: 20px;
     right: 20px;
@@ -115,7 +152,7 @@ body {
     border: 1px solid #ddd;
     border-radius: 8px;
     width: 300px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     padding: 10px;
     z-index: 9999;
 }
@@ -128,8 +165,9 @@ body {
     margin-bottom: 10px;
 }
 
+
 .messages {
-    height: 150px;
+    height: 1000px;
     overflow-y: auto;
     border: 1px solid #ccc;
     padding: 5px;
@@ -146,6 +184,7 @@ body {
 .chat-box button {
     padding: 5px 10px;
 }
+
 /* ////////////////// */
 .user-list {
     background-color: #ffffff;
@@ -155,7 +194,7 @@ body {
     padding: 15px;
     width: 80%;
     max-width: 600px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .user-list h2 {
@@ -178,6 +217,7 @@ body {
     background-color: #007BFF;
     color: #fff;
 }
+
 /* .............................................. */
 
 .post-form {
@@ -186,7 +226,9 @@ body {
 }
 
 /* Form Elements */
-.post-input, .post-textarea, .input-field {
+.post-input,
+.post-textarea,
+.input-field {
     width: 100%;
     padding: 0.7rem;
     margin-bottom: 1rem;
@@ -194,6 +236,7 @@ body {
     border: 1px solid var(--border-white);
     background: var(--modal-input-bg);
 }
+
 .post-textarea {
     width: 100%;
     padding: 0.7rem;
@@ -201,11 +244,14 @@ body {
     border-radius: 8px;
     border: 1px solid var(--border-white);
     background: var(--modal-input-bg);
-    resize: none; /* Prevent resizing */
+    resize: none;
+    /* Prevent resizing */
 }
 
 
-.post-input:focus, .post-textarea:focus, .input-field:focus {
+.post-input:focus,
+.post-textarea:focus,
+.input-field:focus {
     border-color: var(--title-color-hvr);
     outline: none;
 }
@@ -221,6 +267,7 @@ body {
     cursor: pointer;
     transition: background 0.3s;
 }
+
 .submit-button {
     max-width: 90%;
     width: 100%;
@@ -264,14 +311,19 @@ body {
     margin: 20px auto;
     padding: 15px;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     width: 80%;
     max-width: 600px;
     text-align: left;
 }
 
-.post h3 { margin-top: 0; }
-.post p { margin: 5px 0; }
+.post h3 {
+    margin-top: 0;
+}
+
+.post p {
+    margin: 5px 0;
+}
 
 /* Comment Styling */
 .comment {
@@ -285,7 +337,8 @@ body {
 }
 
 /* Buttons */
-.view-comments-btn, #back-to-posts {
+.view-comments-btn,
+#back-to-posts {
     display: inline-block;
     margin-top: 10px;
     padding: 8px 16px;
@@ -297,7 +350,8 @@ body {
     transition: background 0.3s;
 }
 
-.view-comments-btn:hover, #back-to-posts:hover {
+.view-comments-btn:hover,
+#back-to-posts:hover {
     background-color: #0056b3;
 }
 
@@ -359,6 +413,7 @@ body {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
 }
+
 /* Top Meta Layout */
 .post-meta {
     display: flex;
