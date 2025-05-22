@@ -78,8 +78,37 @@ func (m *Manager) ChatHandler(w http.ResponseWriter, r *http.Request) {
 		err = InsertMsg(msg.Content, client.Id, msg.To)
 		if err == nil {
 			msg.Created_at = time.Now()
-			m.broadcast(msg.To, msg)
-			m.broadcast(client.Id, msg)
+
+			// نضيف اسم المرسل مباشرة داخل الرسالة
+			type OutgoingMsg struct {
+				Token      string    `json:"token"`
+				From       int       `json:"from"`
+				To         int       `json:"to"`
+				Content    string    `json:"content"`
+				Created_at time.Time `json:"createdat"`
+				FromName   string    `json:"from_name"`
+			}
+
+			out := OutgoingMsg{
+				Token:      msg.Token,
+				From:       msg.From,
+				To:         msg.To,
+				Content:    msg.Content,
+				Created_at: msg.Created_at,
+				FromName:   client.Nickname, // هذا هو الاسم الذي سيظهر في الواجهة
+			}
+
+			// أرسلها بدلًا من msg العادي
+			for _, receiverID := range []int{msg.To, client.Id} {
+				clients, ok := m.Users[receiverID]
+				if ok {
+					for _, c := range clients {
+						if err := c.Conn.WriteJSON(out); err != nil {
+							log.Println("Failed to send enriched message:", err)
+						}
+					}
+				}
+			}
 		} else {
 			log.Println("failde to insert:", err)
 			msg.Content = ""

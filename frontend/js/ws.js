@@ -1,3 +1,5 @@
+import { currentUserId } from "./chat.js";
+
 export let socket = null
 export function UpgredConnetion() {
     if (socket !== null) {
@@ -34,25 +36,42 @@ export function socketEvent() {
     };
 }
 function writeMessage(parent, msg) {
-    console.log(msg);
     const msgEl = document.createElement("div");
     msgEl.className = "message";
-    msgEl.textContent = msg.content;
-    const createdAt = document.createElement("span")
-    createdAt.className = "created"
-    createdAt.textContent = msg.createdat.split('.')[0]
-    msgEl.appendChild(createdAt)
 
-    if (msg.from === parseInt(parent.id)) {
-        msgEl.classList.add("received");
-    } else {
+    // السطر العلوي: الاسم + التاريخ
+    const header = document.createElement("div");
+    header.className = "message-header";
+
+    const sender = document.createElement("strong");
+    sender.textContent = msg.from_name || msg.nickname || "User";
+
+    const createdAt = document.createElement("span");
+    createdAt.className = "created";
+    const timestamp = msg.createdAt || msg.createdat || new Date().toISOString();
+    createdAt.textContent = new Date(timestamp).toLocaleString();
+
+    header.appendChild(sender);
+    header.appendChild(createdAt);
+
+    // المحتوى
+    const content = document.createElement("div");
+    content.textContent = msg.content;
+
+    msgEl.appendChild(header);
+    msgEl.appendChild(content);
+
+    if (msg.from === currentUserId) {
         msgEl.classList.add("sent");
+    } else {
+        msgEl.classList.add("received");
     }
 
     parent.children[1].appendChild(msgEl);
 
-    const existinNoPostMsg = document.querySelector(".empty-msg")
-    if (existinNoPostMsg) {
-        existinNoPostMsg.remove();
+    const existingNoPostMsg = document.querySelector(".empty-msg");
+    if (existingNoPostMsg) {
+        existingNoPostMsg.remove();
     }
 }
+
