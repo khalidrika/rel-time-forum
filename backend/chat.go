@@ -74,12 +74,10 @@ func (m *Manager) ChatHandler(w http.ResponseWriter, r *http.Request) {
 			log.Println("not same")
 			return
 		}
-		// Send to recipient and echo back to sender
 		err = InsertMsg(msg.Content, client.Id, msg.To)
 		if err == nil {
 			msg.Created_at = time.Now()
 
-			// نضيف اسم المرسل مباشرة داخل الرسالة
 			type OutgoingMsg struct {
 				Token      string    `json:"token"`
 				From       int       `json:"from"`
@@ -95,10 +93,9 @@ func (m *Manager) ChatHandler(w http.ResponseWriter, r *http.Request) {
 				To:         msg.To,
 				Content:    msg.Content,
 				Created_at: msg.Created_at,
-				FromName:   client.Nickname, // هذا هو الاسم الذي سيظهر في الواجهة
+				FromName:   client.Nickname,
 			}
 
-			// أرسلها بدلًا من msg العادي
 			for _, receiverID := range []int{msg.To, client.Id} {
 				clients, ok := m.Users[receiverID]
 				if ok {
