@@ -2,7 +2,7 @@ import { logout } from "./auth.js";
 import { socket } from "./ws.js";
 
 
-let currentUserId = null;
+export let currentUserId = null;
 export let currentUserNickname = null;
 
 export async function loadCurrentUser() {

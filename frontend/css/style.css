@@ -6,10 +6,30 @@ body {
     padding-top: 70px;
     /* Space for fixed header */
 }
-.created {
-    font-size: 7px;
 
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  margin-bottom: 4px;
 }
+
+.message-header strong {
+  color: #222;
+}
+
+.message .created {
+  color: #666;
+  font-weight: normal;
+}
+
+.created {
+    display: block;
+    font-size: 0.7rem;
+    color: #888;
+    margin-top: 4px;
+}
+
 * {
     margin: 0;
     padding: 0;

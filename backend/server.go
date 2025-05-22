@@ -10,8 +10,6 @@ import (
 
 func StartServer() {
 	router := Routes()
-	// rl := NewRetLimiter(20 * time.Microsecond)
-	// http.ListenAndServe(":8080", router)
 	if err := Server(router); err != nil {
 		log.Fatalf("server encounterd an error: %v", err)
 	}
