@@ -19,4 +19,3 @@ func ParseAndExecute(w http.ResponseWriter, data any, filename string) {
 	}
 	buf.WriteTo(w)
 }
-

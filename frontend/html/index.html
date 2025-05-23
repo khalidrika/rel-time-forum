@@ -1,33 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>col</title>
-        <link rel="stylesheet" href="/frontend/css/style.css">
-        
-    </head>
-    <body>
-        <h1>GOL</h1>
-        <div id="app"></div>
-        <script type="module" src="/frontend/js/routes.js"></script>
-        <script type="module" src="/frontend/js/auth.js"></script>
-        <script type="module" src="/frontend/js/app.js"></script>
-        <!-- Chat Sidebar -->
-        <div class="chat-sidebar">
-        <div class="online-users">
-            <h3>Online Users</h3>
-            <div class="user-list" id="userList"></div>
-        </div>
-        </div>
 
-        <!-- Chat Window -->
-        <div class="chat-window">
-        <div class="message-container" id="messageContainer"></div>
-        <div class="message-input">
-            <textarea id="messageInput"></textarea>
-            <button onclick="sendMessage()">Send</button>
-        </div>
-        </div>
-    </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>col</title>
+    <link rel="stylesheet" href="/frontend/css/style.css">
+
+</head>
+
+<body>
+    <header id="main-header">
+        <h1>GOL</h1>
+      </header>      
+    <div id="app"></div>
+
+    <script type="module" src="/frontend/js/routes.js"></script>
+    <!-- <script type="module" src="/frontend/js/auth.js"></script>
+    <script type="module" src="/frontend/js/app.js"></script> -->
+</body>
+
 </html>

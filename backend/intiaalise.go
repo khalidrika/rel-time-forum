@@ -2,7 +2,6 @@ package backend
 
 import (
 	"database/sql"
-	"encoding/json"
 	"log"
 	"os"
 	"time"
@@ -20,20 +19,7 @@ type Links struct {
 }
 
 func Initialise() {
-	InitialiseLinks()
 	InitialiseDB()
-}
-
-func InitialiseLinks() {
-	content, err := os.ReadFile("./backend/cloudLinks.json")
-	if err != nil {
-		log.Fatalf("Failed to read the file cloudLinks.json: %v", err)
-		return
-	}
-	if err = json.Unmarshal(content, &CloudLinks); err != nil {
-		log.Fatalf("Error unmarshalling JSON: %v", err)
-		return
-	}
 }
 
 func InitialiseDB() {

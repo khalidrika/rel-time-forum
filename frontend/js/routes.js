@@ -1,8 +1,44 @@
-const routes = {
-  '/login': 'login',
-  '/register': 'register',
-  '/home': 'home',
-}; 
+import { renderLoginForm, renderRegisterForm } from "./auth.js";
+import { loadCurrentUser, renderUsers } from "./chat.js";
+import { renderPosts } from "./post.js";
+import { socketEvent, UpgredConnetion } from "./ws.js";
+
+let routes = {};
+
+window.addEventListener("DOMContentLoaded", () => {
+  routes = {
+    '/login': renderLoginForm,
+    '/register': renderRegisterForm,
+    '/home': async () => {
+      try {
+        await renderPosts();
+        await loadCurrentUser();
+        UpgredConnetion();
+        socketEvent();
+        renderUsers();
+      } catch (error) {
+        console.error("Failed to render posts:", error);
+      }
+    },
+  };
+  checkSessionAndRedirect();
+});
+
+async function checkSessionAndRedirect() {
+  try {
+    const res = await fetch("/api/me");
+    if (!res.ok) {
+      navigate("/login");
+      return
+    } else {
+      navigate("/home");
+    }
+  } catch (err) {
+    console.error("Session check failed:", err)
+    navigate("/login")
+  }
+}
+
 
 export function navigate(path) {
   history.pushState({}, '', path);
@@ -11,24 +47,15 @@ export function navigate(path) {
 
 
 export function renderPage(path) {
-  const page = routes[path] || 'login';
-
-  //document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
- // document.getElementById(page).classList.add('active');
-
-  if (page === 'home') {
-    const user = sessionStorage.getItem('loggedIn');
-    if (!user) {
-      navigate('/login');
-    } else {
-      document.getElementById('welcomeUser').innerText = `Hello, ${user}`;
-    }
+  if (routes[path]) {
+    routes[path]()
+  } else {
+    navigate("/login")
   }
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  const el = document.getElementById(page);
-  if (el) el.classList.add('active');
-  window.addEventListener('popstate', ()=> {
-    renderPage(window.location.pathname);
-  })
 
 }
+
+window.addEventListener('popstate', () => {
+  console.log("-----------------1a");
+  checkSessionAndRedirect()
+})

@@ -1,33 +1,37 @@
 import { navigate } from "./routes.js";
-
-function renderLoginForm() {
+import { renderPosts } from "./post.js";
+import { socket } from "./ws.js";
+export function renderLoginForm() {
   const form = `
-    <div class="modal-dialog">
-      <div id="loginContainer" class="form-container">
-        <h2 class="modal-title">Login</h2>
-        <form id="login-form">
-          <label for="loginEmail">
-            Email or nickname
-            <span>*</span>
-          </label>
-          <input type="text" name="identifier" id="loginEmail" class="input-field" placeholder="Email or Nickname" maxlength="200" required />
-          <label for="loginPassword">
-            Password
-            <span>*</span>
-          </label>
-          <input type="password" id="loginPassword" class="input-field" name="password" maxlength="100" placeholder="Password" required />
-          <button type="submit" id="loginSubmit" class="submit-button disabled">Log In</button>
-        </form>
-        <p>Don't have an account? <a href="#" id="show-register">Register here</a></p>
-        <div id="error" style="color: red;"></div>
-      </div>
+  <div class="modal-overlay">
+  <div class="modal-dialog">
+  <div id="loginContainer" class="form-container">
+    <h2 class="modal-title">Login</h2>
+    <form id="login-form">
+    <label for="loginEmail">
+    Email or nickname
+    <span>*</span>
+    </label>
+      <input type="text" name="identifier" id="liginEmail" class="input-field" placeholder="Email or Nickname" maxlength="200" required />
+      <label for="liginPassword">
+      Password
+      <span>*</span>
+      </label>
+      <input type="password" id="loginPassword" class="input-field" name="password" maxlength="100" placeholder="Password" required />
+      <button type="submit" id="loginSubmit" class="submit-button disbled">Log In</button>
+    </form>
+    <p>Don't have an account? <a href="#" id="show-register">Register here</a></p>
+    <div id="error" style="color: red;"></div>
+    </div>
+    </div>
     </div>
   `;
 
   document.getElementById("app").innerHTML = form;
   document.getElementById("show-register").addEventListener("click", (e) => {
     e.preventDefault();
-    renderRegisterForm();
+    navigate("/register")
+    // renderRegisterForm();
   });
   // Event handler for login
   document.getElementById("login-form").addEventListener("submit", async (e) => {
@@ -47,7 +51,7 @@ function renderLoginForm() {
     if (!res.ok) {
       console.log("WWWWWWW");
       document.getElementById("error").textContent = data.error || "Login failed";
-      
+
       return;
     }
 
@@ -55,13 +59,12 @@ function renderLoginForm() {
 
     // alert("Login successful! Welcome " + data.name);
     document.getElementById("app").innerHTML = ""
-    fetchUserProfile();
+    renderPosts();
   });
 }
 
 // Show form on page load
-window.addEventListener("DOMContentLoaded", renderLoginForm);
-function renderRegisterForm() {
+export function renderRegisterForm() {
   const form = `  
     <div class="modal-overlay">
   <div class="modal-dialog">
@@ -116,9 +119,10 @@ function renderRegisterForm() {
   document.getElementById("register-form").addEventListener("submit", handleRegister);
   document.getElementById("show-login").addEventListener("click", (e) => {
     e.preventDefault();
-    renderLoginForm();
+    navigate("/login")
+    // renderLoginForm();
   });
-  document.getElementById("register-form").addEventListener("submit", async(e)=> {
+  document.getElementById("register-form").addEventListener("submit", async (e) => {
     e.preventDefault();
 
   })
@@ -154,32 +158,10 @@ async function handleRegister(e) {
   renderLoginForm(); // redirect to login
 }
 
-async function logout() {
-  const res = await fetch('/api/logout', {method: 'POST' });
-  if (res.ok) {
-    alert('Logged out successfully!');
-    window.location.reload();
-  }else {
-    alert('Failde to logout.');
-  }
+export async function logout() {
+  const res = await fetch('/api/logout', { method: 'POST' });
+    // alert('Logged out successfully!');
+    // window.location.reload();
+    navigate("/login");
+    socket.close()
 }
-
-async function fetchUserProfile() {
-  const res = await fetch("/api/me", {
-    method: "GET",
-    credentials: "include",
-  });
-  if (!res.ok) {
-    console.log("Not logged in");
-    return;
-  }
-  const user = await res.json();
-  document.getElementById("app").innerHTML = `
-    <h2 class="me">Welcome, ${user.nickname}!</h2>
-    <p class="me">Email: ${user.email}</p>
-    <p class="me">Name: ${user.firstName} ${user.lastName}</p>
-    <button class="submit-button disbled" onclick="logout()">Logout</button>
-  `;
-}
-
-window.logout = logout;

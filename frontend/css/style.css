@@ -1,102 +1,121 @@
+/* General Styles */
 body {
     font-family: Arial, sans-serif;
     text-align: center;
+    background-color: var(--body-bg);
+    padding-top: 70px;
+    /* Space for fixed header */
 }
 
-#me{
-     font-family: 'Courier New', Courier, monospace;
-     text-shadow: #0079d3;
-     color: brown;
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  margin-bottom: 4px;
 }
-.modal-overlay {
+
+.message-header strong {
+  color: #222;
+}
+
+.message .created {
+  color: #666;
+  font-weight: normal;
+}
+
+.created {
+    display: block;
+    font-size: 0.7rem;
+    color: #888;
+    margin-top: 4px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.message {
+    max-width: 70%;
+    margin: 5px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    display: inline-block;
+    clear: both;
+}
+
+.message.sent {
+    background-color: #d4edda;
+    color: #155724;
+    float: right;
+    text-align: right;
+}
+
+.message.received {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    float: left;
+    text-align: left;
+}
+
+/* Fixed Header */
+#main-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #007BFF;
+    color: white;
+    padding: 15px 0;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+/* Logout Button */
+.submit-logot {
+    position: fixed;
+    top: 15px;
+    right: 20px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    z-index: 1001;
+}
+
+.submit-logot:hover {
+    background-color: #c82333;
+    transform: scale(1.05);
+}
+
+/* Modal Overlay */
+.modal-overlay,
+.modal {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
+    background-color: var(--trans-modal);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* ensure it’s on top */
-  }
-.modal-dialog {
-    width: 350px;
-    padding: 2rem;
-    border-radius: 12px;
-    text-align: center;
-    position: relative;
-    max-height: 80vh;
-    overflow-y: auto; 
-    margin-top: 60px;
-    overflow-y: auto;
-}
-.form-container {
+    z-index: 1000;
     transition: opacity 0.3s;
 }
-.form-container.hidden {
-    display: none;
+
+.hidden {
+    visibility: hidden;
+    opacity: 0;
 }
 
-.modal-title {
-    color: var(--title-color);
-    line-height: 1.4;
-}
-.input-field {
-    width: 100%;
-    padding: 0.7rem;
-    margin-bottom: 1rem;
-    border-radius: 8px;
-    border: 1px solid var(--border-white);
-    background: var(--modal-input-bg);
-}
-.input-field:focus{
-    border-color: var(--title-color-hvr);
-    outline: none; 
-}
-:root.dark-mode .input-field {
-    color: rgb(243, 243, 243);
-    border: 1px solid rgb(136, 136, 136);
-}
-:root.dark-mode .input-field::placeholder {
-    color: rgb(174, 174, 174);
-}
-.input-field {
-    width: 100%;
-    padding: 0.7rem;
-    margin-bottom: 1rem;
-    border-radius: 8px;
-    border: 1px solid var(--border-white);
-    background: var(--modal-input-bg);
-}
-.input-field:focus{
-    border-color: var(--title-color-hvr);
-    outline: none; 
-}
-:root.dark-mode .input-field {
-    color: rgb(243, 243, 243);
-    border: 1px solid rgb(136, 136, 136);
-}
-
-:root.dark-mode .input-field::placeholder {
-    color: rgb(174, 174, 174);
-}
-
-.submit-button {
-    display: block;
-    width: 100%;
-    padding: 0.6rem;
-    border-radius: 999px;
-    border: none;
-    font-weight: 600;
-    color: var(--white);
-    background: var(--submit-btn);
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-.submit-button:hover:not(.disabled) {
-    background: var(--title-color);
-}
+/* Modal Dialog */
 .modal-dialog {
     background-color: var(--white);
     width: 350px;
@@ -108,23 +127,354 @@ body {
     overflow-y: auto;
     margin-top: 60px;
 }
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
+
+/* Post Dialog Specific */
+.post-dialog {
+    max-width: 600px;
+    width: 90%;
+    border-radius: 12px;
+    padding: 2rem;
+    background-color: var(--white);
+    text-align: center;
+    position: relative;
+    max-height: 80vh;
+    overflow-y: auto;
+    margin-top: 130px;
 }
-user agent stylesheet
-div {
-    display: block;
-    unicode-bidi: isolate;
+
+.close-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--grey-mr);
 }
-body {
-    font-family: Arial, sans-serif;
-    background-color: var(--body-bg);
-    /* background-image: linear-gradient(#def1fa, #2da1e4); */
-    /* background-attachment: fixed; */
+
+/* ========================== */
+/* ===== User List Box ======= */
+/* ========================== */
+
+.chat-box {
+    width: 500px;
+    height: 500px;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #fff;
+    border: 1px solid #ccc;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 300px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    z-index: 9999;
 }
+
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+
+.messages {
+    height: 1000px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 5px;
+    margin-bottom: 10px;
+    background: #f9f9f9;
+}
+
+.chat-box input {
+    width: calc(100% - 60px);
+    padding: 5px;
+    margin-right: 5px;
+}
+
+.chat-box button {
+    padding: 5px 10px;
+}
+
+/* ////////////////// */
+.user-list {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin: 20px auto;
+    padding: 15px;
+    width: 80%;
+    max-width: 600px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.user-list h2 {
+    margin-bottom: 10px;
+    color: #333;
+    text-align: left;
+}
+
+.user-item {
+    padding: 8px 12px;
+    margin: 5px 0;
+    background-color: #f1f1f1;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-align: left;
+}
+
+.user-item:hover {
+    background-color: #007BFF;
+    color: #fff;
+}
+
+/* .............................................. */
+
+.post-form {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Form Elements */
+.post-input,
+.post-textarea,
+.input-field {
+    width: 100%;
+    padding: 0.7rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-white);
+    background: var(--modal-input-bg);
+}
+
+.post-textarea {
+    width: 100%;
+    padding: 0.7rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-white);
+    background: var(--modal-input-bg);
+    resize: none;
+    /* Prevent resizing */
+}
+
+
+.post-input:focus,
+.post-textarea:focus,
+.input-field:focus {
+    border-color: var(--title-color-hvr);
+    outline: none;
+}
+
+/* Post Submit Button */
+.post-submit {
+    width: 100%;
+    background-color: #1ad1ff;
+    color: #fff;
+    border: none;
+    padding: 0.6rem;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.submit-button {
+    max-width: 90%;
+    width: 100%;
+    background-color: #1ad1ff;
+    color: #fff;
+    border: none;
+    padding: 0.6rem;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+/* Floating Add Button */
+.fab {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: var(--nav-btn);
+    color: var(--white);
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    box-shadow: 3px 3px 3px var(--notif-shadow);
+    transition: transform 0.3s, background-color 0.3s;
+}
+
+.fab:hover {
+    transform: rotate(90deg) scale(1.1);
+    background-color: var(--submit-btn);
+}
+
+/* Posts Styling */
+.post {
+    background-color: #ffffff;
+    margin: 20px auto;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    max-width: 600px;
+    text-align: left;
+}
+
+.post h3 {
+    margin-top: 0;
+}
+
+.post p {
+    margin: 5px 0;
+}
+
+/* Comment Styling */
+.comment {
+    background-color: #f9f9f9;
+    padding: 10px;
+    margin: 10px auto;
+    border-left: 4px solid #007BFF;
+    border-radius: 4px;
+    width: 75%;
+    max-width: 550px;
+}
+
+/* Buttons */
+.view-comments-btn,
+#back-to-posts {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 20px;
+    background-color: #007BFF;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.view-comments-btn:hover,
+#back-to-posts:hover {
+    background-color: #0056b3;
+}
+
+/* Comment Form */
+#comment-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px auto;
+    width: 80%;
+    max-width: 600px;
+}
+
+#comment-form textarea {
+    max-width: 92%;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    resize: vertical;
+    min-height: 80px;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+#comment-form button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 20px;
+    background-color: #28a745;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#comment-form button:hover {
+    background-color: #218838;
+}
+
+/* Root Colors */
+
+/* Post Card Style */
+/* Post Layout Update */
+
+.post {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 1rem;
+    margin: 1rem auto;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.2s, transform 0.2s;
+    position: relative;
+}
+
+.post:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+/* Top Meta Layout */
+.post-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+/* Title and Content */
+.post h3 {
+    margin: 0.5rem 0 0.25rem 0;
+    font-size: 1.25rem;
+    color: #333;
+}
+
+.post p {
+    margin: 0.25rem 0;
+    font-size: 0.95rem;
+    color: #555;
+}
+
+/* Button Styling */
+.view-comments-btn {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    border: none;
+    border-radius: 999px;
+    background-color: #007bff;
+    color: white;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.view-comments-btn:hover {
+    background-color: #0056b3;
+}
+
 :root {
     --body-bg: rgb(124, 139, 117);
     --body-bg2: #e5edff;

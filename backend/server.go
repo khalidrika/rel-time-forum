@@ -10,7 +10,6 @@ import (
 
 func StartServer() {
 	router := Routes()
-	// rl := NewRetLimiter(20 * time.Microsecond)
 	if err := Server(router); err != nil {
 		log.Fatalf("server encounterd an error: %v", err)
 	}
@@ -23,7 +22,7 @@ func Server(handler http.Handler) error {
 	if envPort != "" {
 		// port = ":8080"
 	}
-	listener, err := net.Listen("tcp", ":8080")
+	listener, err := net.Listen("tcp", ":8086")
 	if err != nil {
 		log.Fatalf("error starting server : %v", err)
 		return err
