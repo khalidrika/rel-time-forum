@@ -1,5 +1,5 @@
 import { logout } from "./auth.js";
-import { socket } from "./ws.js";
+import { socket, updateUserStatus } from "./ws.js";
 
 export let currentUserId = null;
 export let currentUserNickname = null;
@@ -35,7 +35,7 @@ export async function renderUsers() {
         usersContainer.className = "user-list";
 
         const header = document.createElement("h2");
-        header.textContent = "Online Users";
+        header.textContent = "Users";
         usersContainer.appendChild(header);
 
         if (users.length === 0) {
@@ -46,10 +46,35 @@ export async function renderUsers() {
             const fragment = document.createDocumentFragment();
             users.forEach(user => {
                 const userItem = document.createElement("div");
-                userItem.className = "user-item";
-                userItem.textContent = user.nickname;
-                userItem.addEventListener("click", () => openChatWindow(user));
-                fragment.appendChild(userItem);
+            userItem.className = "user-item";
+            userItem.dataset.userid = user.id; //real-time updates
+
+            // Add online/offline indicator
+            const statusDot = document.createElement("span");
+            statusDot.className = "status-dot";
+            statusDot.style.display = "inline-block";
+            statusDot.style.width = "10px";
+            statusDot.style.height = "10px";
+            statusDot.style.borderRadius = "50%";
+            statusDot.style.marginRight = "8px";
+            statusDot.style.backgroundColor = user.online ? "#4caf50" : "#ccc";
+            statusDot.title = user.online ? "Online" : "Offline";
+
+            const nameSpan = document.createElement("span");
+            nameSpan.textContent = user.nickname;
+
+            const statusText = document.createElement("span");
+            
+            statusText.textContent = user.online ? " (Online)" : " (Offline)";
+            statusText.style.color = user.online ? "#4caf50" : "#888";
+            statusText.style.fontSize = "0.9em";
+
+            userItem.appendChild(statusDot);
+            userItem.appendChild(nameSpan);
+            userItem.appendChild(statusText);
+
+            userItem.addEventListener("click", () => openChatWindow(user));
+            fragment.appendChild(userItem);
             });
             usersContainer.appendChild(fragment);
         }
@@ -98,6 +123,17 @@ export function createChatbox(user) {
     title.className = "chat-title";
     title.textContent = `Chat with ${user.nickname || "User"}`;
 
+    const statusDot = document.createElement("span");
+    statusDot.className = "status-dot";
+    statusDot.style.display = "inline-block";
+    statusDot.style.width = "10px";
+    statusDot.style.height = "10px";
+    statusDot.style.borderRadius = "50%";
+    statusDot.style.marginRight = "8px";
+    statusDot.style.backgroundColor = user.online ? "#4caf50" : "#ccc";
+    statusDot.title = user.online ? "Online" : "Offline";
+    title.prepend(statusDot);
+    updateUserStatus(user.id, user.online);
     const closeButton = document.createElement("button");
     closeButton.className = "btn btn-danger chat-close-button";
     closeButton.innerHTML = "&times;";
@@ -221,4 +257,14 @@ export async function openChatWindow(user) {
     inputWrapper.appendChild(input);
     inputWrapper.appendChild(sendButton);
     chatBox.appendChild(inputWrapper);
+}
+
+// Update the status dot in the chatbox for a specific user
+export function updateChatboxStatusDot(userId, online) {
+    const chatBox = document.querySelector(`.chat-box[data-user-id="${userId}"]`);
+    if (!chatBox) return;
+    const statusDot = chatBox.querySelector(".status-dot");
+    if (!statusDot) return;
+    statusDot.style.backgroundColor = online ? "#4caf50" : "#ccc";
+    statusDot.title = online ? "Online" : "Offline";
 }
