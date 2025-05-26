@@ -1,4 +1,4 @@
-import { buildMessageElement, currentUserId } from "./chat.js";
+import { buildMessageElement, currentUserId, updateChatboxStatusDot } from "./chat.js";
 
 export let socket = null
 export function UpgredConnetion() {
@@ -18,7 +18,12 @@ export function socketEvent() {
 
     socket.onmessage = (e) => {
         const msg = JSON.parse(e.data);
-
+        //  console.log("Message:\n", msg);
+        if (msg.type === "status") {
+            // Real-time status update
+            updateUserStatus(msg.userId, msg.online);
+            return;
+        }
         const senderchat = document.getElementById(`${msg.to}`);
         console.log(msg.to);
 
@@ -58,4 +63,21 @@ function writeMessage(msg) {
 
     const empty = messages.querySelector(".no-messages");
     if (empty) empty.remove();
+}
+
+export function updateUserStatus(userId, online) {
+    // Update user list
+    document.querySelectorAll('.user-item').forEach(item => {
+        if (item.userId == userId || item.dataset.userid == userId) {
+            const dot = item.querySelector('.status-dot');
+            const text = item.querySelector('span:last-child');
+            if (dot) dot.style.backgroundColor = online ? "#4caf50" : "#ccc";
+            if (text) {
+                text.textContent = online ? " (Online)" : " (Offline)";
+                text.style.color = online ? "#4caf50" : "#888";
+            }
+        }
+    });
+    // Update chat window (use exported function for real-time update)
+    updateChatboxStatusDot(userId, online);
 }
