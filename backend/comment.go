@@ -101,10 +101,10 @@ func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
 			ErrorHandler(w, "Failed to read comment", http.StatusInternalServerError)
 			return
 		}
-		log.Println(c)
+		// log.Println(c)
 		comments = append(comments, c)
 	}
-	log.Println(comments)
+	// log.Println(comments)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(comments)
 }

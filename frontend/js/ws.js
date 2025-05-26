@@ -1,4 +1,4 @@
-import { currentUserId } from "./chat.js";
+import { buildMessageElement, currentUserId } from "./chat.js";
 
 export let socket = null
 export function UpgredConnetion() {
@@ -20,13 +20,17 @@ export function socketEvent() {
         const msg = JSON.parse(e.data);
 
         const senderchat = document.getElementById(`${msg.to}`);
-        const receivechat = document.getElementById(`${msg.from}`);
+        console.log(msg.to);
+
+        const receivechat = document.querySelector(`div[data-user-id="${msg.from}"]`);
+        console.log(receivechat);
+
         // console.log(activeChat);
         if (senderchat) {
-            writeMessage(senderchat, msg);
+            writeMessage(msg);
 
         } else if (receivechat) {
-            writeMessage(receivechat, msg);
+            writeMessage(msg);
         } else {
             console.log("No active chat window to display the message");
         }
@@ -35,43 +39,23 @@ export function socketEvent() {
         socket = null;
     };
 }
-function writeMessage(parent, msg) {
-    const msgEl = document.createElement("div");
-    msgEl.className = "message";
+function writeMessage(msg) {
+    const userId = msg.from === currentUserId ? String(msg.to) : String(msg.from);
+    console.log(userId);
 
-    // السطر العلوي: الاسم + التاريخ
-    const header = document.createElement("div");
-    header.className = "message-header";
-
-    const sender = document.createElement("strong");
-    sender.textContent = msg.from_name || msg.nickname || "User";
-
-    const createdAt = document.createElement("span");
-    createdAt.className = "created";
-    const timestamp = msg.createdAt || msg.createdat || new Date().toISOString();
-    createdAt.textContent = new Date(timestamp).toLocaleString();
-
-    header.appendChild(sender);
-    header.appendChild(createdAt);
-
-    // المحتوى
-    const content = document.createElement("div");
-    content.textContent = msg.content;
-
-    msgEl.appendChild(header);
-    msgEl.appendChild(content);
-
-    if (msg.from === currentUserId) {
-        msgEl.classList.add("sent");
-    } else {
-        msgEl.classList.add("received");
+    const chatBox = document.querySelector(`div[data-user-id="${userId}"]`);
+    if (!chatBox) {
+        console.log("No active chat window to display the message");
+        return;
     }
 
-    parent.children[1].appendChild(msgEl);
-
-    const existingNoPostMsg = document.querySelector(".empty-msg");
-    if (existingNoPostMsg) {
-        existingNoPostMsg.remove();
+    const messages = chatBox.querySelector(".messages");
+    const msgEl = buildMessageElement(msg);
+    if (msgEl) {
+        messages.appendChild(msgEl);
+        messages.scrollTop = messages.scrollHeight;
     }
+
+    const empty = messages.querySelector(".no-messages");
+    if (empty) empty.remove();
 }
-

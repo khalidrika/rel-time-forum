@@ -54,12 +54,12 @@ func (m *Manager) ChatHandler(w http.ResponseWriter, r *http.Request) {
 
 	client := NewClient(id, nickname, cookie.Value, conn)
 	m.addclient(client)
-	log.Printf("User %s connected, active connections: %d", nickname, len(m.Users[id]))
+	// log.Printf("User %s connected, active connections: %d", nickname, len(m.Users[id]))
 	var msg Message
 	for {
 		_, payload, err := conn.ReadMessage()
 		if err != nil {
-			log.Printf("Connection closed for user %d", client.Id)
+			// log.Printf("Connection closed for user %d", client.Id)
 			m.removeclient(client)
 			break
 		}
@@ -194,6 +194,7 @@ func GetMessagesHandler(w http.ResponseWriter, r *http.Request) {
 		ErrorHandler(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
+	offset := r.URL.Query().Get("offset")
 
 	otherUserIDStr := r.URL.Query().Get("userId")
 	if otherUserIDStr == "" {
@@ -206,13 +207,14 @@ func GetMessagesHandler(w http.ResponseWriter, r *http.Request) {
 		ErrorHandler(w, "Invalid userId", http.StatusBadRequest)
 		return
 	}
-
 	rows, err := DB.Query(`
-        SELECT sender_id, receiver_id, content 
-        FROM messages 
-        WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)
-        ORDER BY created_at ASC
-    `, userID, otherUserID, otherUserID, userID)
+    SELECT m.sender_id, m.receiver_id, m.content, m.created_at, u.nickname
+    FROM messages m
+    JOIN users u ON m.sender_id = u.id
+    WHERE (m.sender_id = ? AND m.receiver_id = ?) OR (m.sender_id = ? AND m.receiver_id = ?)
+    ORDER BY m.created_at DESC
+    LIMIT 10 OFFSET ?
+    `, userID, otherUserID, otherUserID, userID, offset)
 	if err != nil {
 		ErrorHandler(w, "Database error", http.StatusInternalServerError)
 		return
@@ -222,15 +224,20 @@ func GetMessagesHandler(w http.ResponseWriter, r *http.Request) {
 	var messages []map[string]interface{}
 	for rows.Next() {
 		var senderID, receiverID int
-		var content string
-		if err := rows.Scan(&senderID, &receiverID, &content); err != nil {
+		var content, fromName string
+		var createdAt time.Time
+
+		if err := rows.Scan(&senderID, &receiverID, &content, &createdAt, &fromName); err != nil {
 			continue
 		}
 		messages = append(messages, map[string]interface{}{
-			"from":    senderID,
-			"to":      receiverID,
-			"content": content,
+			"from":      senderID,
+			"to":        receiverID,
+			"content":   content,
+			"createdat": createdAt.Format(time.RFC3339),
+			"from_name": fromName,
 		})
+
 	}
 
 	w.Header().Set("Content-Type", "application/json")
