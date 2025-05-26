@@ -119,7 +119,19 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		ErrorHandler(w, "Invalid request", http.StatusBadRequest)
 		return
 	}
-
+	if len(req.Nickname) > 15 {
+		ErrorHandler(w, "nickname too large", http.StatusBadRequest)
+		return
+	}
+	if len(req.FirstName) > 20 {
+		ErrorHandler(w, "first name too large", http.StatusBadRequest)
+		return
+	}
+	if len(req.LastName) > 20 {
+		ErrorHandler(w, "last name too large", http.StatusBadRequest)
+		return
+	}
+	
 	var exists bool
 
 	err := DB.QueryRow("SELECT EXISTS (SELECT 1 FROM users WHERE nickname = ? OR email = ?)", req.Nickname, req.Email).Scan(&exists)

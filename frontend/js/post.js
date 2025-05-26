@@ -124,8 +124,8 @@ export async function showPostWithComments(post) {
 
   const commentForm = `
     <form id="comment-form">
-    <textarea name="content" placeholder="Write a comment..." required></textarea>
-    <button type="submit">Send</button>
+    <textarea class="textcomment" name="content" placeholder="Write a comment..." required></textarea>
+    <button class="sendcomment" type="submit">Submit</button>
     </form>
     <button id="back-to-posts" class="back-button">Back to Posts</button>
   `;
