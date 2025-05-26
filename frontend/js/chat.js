@@ -58,8 +58,8 @@ export async function renderUsers() {
             statusDot.style.borderRadius = "50%";
             statusDot.style.marginRight = "8px";
             statusDot.style.backgroundColor = user.online ? "#4caf50" : "#ccc";
-            statusDot.title = user.online ? "Online" : "Offline";
-
+            // statusDot.title = user.online ? "Online" : "Offline";
+            
             const nameSpan = document.createElement("span");
             nameSpan.textContent = user.nickname;
 
@@ -115,13 +115,13 @@ export function createChatbox(user) {
     const chatBox = document.createElement("div");
     chatBox.className = "chat-box";
     chatBox.dataset.userId = String(user.id); // تأكد أنه string
-
+    chatBox.dataset.userid = user.id; // real-time updates
     const header = document.createElement("div");
     header.className = "chat-header";
 
     const title = document.createElement("span");
     title.className = "chat-title";
-    title.textContent = `Chat with ${user.nickname || "User"}`;
+    title.textContent = `Chat with ${user.nickname}`;
 
     const statusDot = document.createElement("span");
     statusDot.className = "status-dot";
@@ -131,9 +131,9 @@ export function createChatbox(user) {
     statusDot.style.borderRadius = "50%";
     statusDot.style.marginRight = "8px";
     statusDot.style.backgroundColor = user.online ? "#4caf50" : "#ccc";
-    statusDot.title = user.online ? "Online" : "Offline";
+    // statusDot.title = user.online ? "Online" : "Offline";
     title.prepend(statusDot);
-    updateUserStatus(user.id, user.online);
+
     const closeButton = document.createElement("button");
     closeButton.className = "btn btn-danger chat-close-button";
     closeButton.innerHTML = "&times;";
@@ -257,14 +257,4 @@ export async function openChatWindow(user) {
     inputWrapper.appendChild(input);
     inputWrapper.appendChild(sendButton);
     chatBox.appendChild(inputWrapper);
-}
-
-// Update the status dot in the chatbox for a specific user
-export function updateChatboxStatusDot(userId, online) {
-    const chatBox = document.querySelector(`.chat-box[data-user-id="${userId}"]`);
-    if (!chatBox) return;
-    const statusDot = chatBox.querySelector(".status-dot");
-    if (!statusDot) return;
-    statusDot.style.backgroundColor = online ? "#4caf50" : "#ccc";
-    statusDot.title = online ? "Online" : "Offline";
 }

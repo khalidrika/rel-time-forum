@@ -2,7 +2,6 @@ package backend
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -20,12 +19,11 @@ var upgrade = websocket.Upgrader{
 }
 
 type Message struct {
-	Token        string    `json:"token"`
-	From         int       `json:"from"`
-	To           int       `json:"to"`
-	Content      string    `json:"content"`
-	Created_at   time.Time `json:"createdat"`
-	FromNickname string    `json:"fromNickname"`
+	Token      string    `json:"token"`
+	From       int       `json:"from"`
+	To         int       `json:"to"`
+	Content    string    `json:"content"`
+	Created_at time.Time `json:"createdat"`
 }
 
 func (m *Manager) ChatHandler(w http.ResponseWriter, r *http.Request) {
@@ -56,13 +54,13 @@ func (m *Manager) ChatHandler(w http.ResponseWriter, r *http.Request) {
 
 	client := NewClient(id, nickname, cookie.Value, conn)
 	m.addclient(client)
-	m.broadcastStatus(id, true) // Broadcast online status
-	log.Printf("User %s connected, active connections: %d", nickname, len(m.Users[id]))
+	m.broadcastStatus(id, true)
+	// log.Printf("User %s connected, active connections: %d", nickname, len(m.Users[id]))
 	var msg Message
 	for {
 		_, payload, err := conn.ReadMessage()
 		if err != nil {
-			log.Printf("Connection closed for user %d", client.Id)
+			// log.Printf("Connection closed for user %d", client.Id)
 			m.removeclient(client)
 			break
 		}
@@ -73,17 +71,42 @@ func (m *Manager) ChatHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		msg.From = client.Id
-		msg.FromNickname = client.Nickname
 		if msg.Token != client.Token {
 			log.Println("not same")
 			return
 		}
-		// Send to recipient and echo back to sender
 		err = InsertMsg(msg.Content, client.Id, msg.To)
 		if err == nil {
 			msg.Created_at = time.Now()
-			m.broadcast(msg.To, msg)
-			m.broadcast(client.Id, msg)
+
+			type OutgoingMsg struct {
+				Token      string    `json:"token"`
+				From       int       `json:"from"`
+				To         int       `json:"to"`
+				Content    string    `json:"content"`
+				Created_at time.Time `json:"createdat"`
+				FromName   string    `json:"from_name"`
+			}
+
+			out := OutgoingMsg{
+				Token:      msg.Token,
+				From:       msg.From,
+				To:         msg.To,
+				Content:    msg.Content,
+				Created_at: msg.Created_at,
+				FromName:   client.Nickname,
+			}
+
+			for _, receiverID := range []int{msg.To, client.Id} {
+				clients, ok := m.Users[receiverID]
+				if ok {
+					for _, c := range clients {
+						if err := c.Conn.WriteJSON(out); err != nil {
+							log.Println("Failed to send enriched message:", err)
+						}
+					}
+				}
+			}
 		} else {
 			log.Println("failde to insert:", err)
 			msg.Content = ""
@@ -103,8 +126,6 @@ func InsertMsg(msg string, from, to int) error {
 func (m *Manager) broadcast(id int, message Message) {
 	clients, ok := m.Users[id]
 
-	fmt.Println("clients  : ", clients)
-
 	if !ok || len(clients) == 0 {
 		log.Printf("No active clients for user %d", id)
 		return
@@ -114,19 +135,6 @@ func (m *Manager) broadcast(id int, message Message) {
 		err := client.Conn.WriteJSON(message)
 		if err != nil {
 			log.Println("Failed to send message:", err)
-		}
-	}
-}
-
-func (m *Manager) broadcastStatus(userID int, online bool) {
-	statusMsg := map[string]interface{}{
-		"type":   "status",
-		"userId": userID,
-		"online": online,
-	}
-	for _, clients := range m.Users {
-		for _, client := range clients {
-			client.Conn.WriteJSON(statusMsg)
 		}
 	}
 }
@@ -147,7 +155,7 @@ func (m *Manager) removeclient(c *Client) {
 	// Cleanup if no more connections for user
 	if len(m.Users[c.Id]) == 0 {
 		delete(m.Users, c.Id)
-		m.broadcastStatus(c.Id, false) // Broadcast offline status
+		m.broadcastStatus(c.Id, false)
 	}
 }
 
@@ -188,12 +196,26 @@ func (m *Manager) GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(users)
 }
 
+func (m *Manager) broadcastStatus(userID int, online bool) {
+	statusMsg := map[string]interface{}{
+		"type":   "status",
+		"userId": userID,
+		"online": online,
+	}
+	for _, clients := range m.Users {
+		for _, client := range clients {
+			client.Conn.WriteJSON(statusMsg)
+		}
+	}
+}
+
 func GetMessagesHandler(w http.ResponseWriter, r *http.Request) {
 	userID, err := GetUserIDFromRequest(r)
 	if err != nil {
 		ErrorHandler(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
+	offset := r.URL.Query().Get("offset")
 
 	otherUserIDStr := r.URL.Query().Get("userId")
 	if otherUserIDStr == "" {
@@ -206,29 +228,14 @@ func GetMessagesHandler(w http.ResponseWriter, r *http.Request) {
 		ErrorHandler(w, "Invalid userId", http.StatusBadRequest)
 		return
 	}
-
-	// Pagination: limit and offset
-	limit := 10
-	offset := 0
-	if l := r.URL.Query().Get("limit"); l != "" {
-		if lInt, err := strconv.Atoi(l); err == nil && lInt > 0 {
-			limit = lInt
-		}
-	}
-	if o := r.URL.Query().Get("offset"); o != "" {
-		if oInt, err := strconv.Atoi(o); err == nil && oInt >= 0 {
-			offset = oInt
-		}
-	}
-
 	rows, err := DB.Query(`
-        SELECT m.sender_id, m.receiver_id, m.content, m.created_at, u.nickname
-        FROM messages m
-        JOIN users u ON m.sender_id = u.id
-        WHERE (m.sender_id = ? AND m.receiver_id = ?) OR (m.sender_id = ? AND m.receiver_id = ?)
-        ORDER BY m.created_at DESC
-        LIMIT ? OFFSET ?
-    `, userID, otherUserID, otherUserID, userID, limit, offset)
+    SELECT m.sender_id, m.receiver_id, m.content, m.created_at, u.nickname
+    FROM messages m
+    JOIN users u ON m.sender_id = u.id
+    WHERE (m.sender_id = ? AND m.receiver_id = ?) OR (m.sender_id = ? AND m.receiver_id = ?)
+    ORDER BY m.created_at DESC
+    LIMIT 10 OFFSET ?
+    `, userID, otherUserID, otherUserID, userID, offset)
 	if err != nil {
 		ErrorHandler(w, "Database error", http.StatusInternalServerError)
 		return
@@ -238,23 +245,20 @@ func GetMessagesHandler(w http.ResponseWriter, r *http.Request) {
 	var messages []map[string]interface{}
 	for rows.Next() {
 		var senderID, receiverID int
-		var content, fromNickname string
+		var content, fromName string
 		var createdAt time.Time
-		if err := rows.Scan(&senderID, &receiverID, &content, &createdAt, &fromNickname); err != nil {
+
+		if err := rows.Scan(&senderID, &receiverID, &content, &createdAt, &fromName); err != nil {
 			continue
 		}
 		messages = append(messages, map[string]interface{}{
-			"from":         senderID,
-			"to":           receiverID,
-			"content":      content,
-			"created_at":   createdAt,
-			"fromNickname": fromNickname,
+			"from":      senderID,
+			"to":        receiverID,
+			"content":   content,
+			"createdat": createdAt.Format(time.RFC3339),
+			"from_name": fromName,
 		})
-	}
 
-	// Reverse messages to chronological order (oldest first)
-	for i, j := 0, len(messages)-1; i < j; i, j = i+1, j-1 {
-		messages[i], messages[j] = messages[j], messages[i]
 	}
 
 	w.Header().Set("Content-Type", "application/json")
