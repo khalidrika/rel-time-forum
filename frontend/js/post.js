@@ -274,6 +274,11 @@ function createPosts(posts, postscontainer, possition) {
       e.preventDefault();
       showPostWithComments(post);
     });
+    
+    div?.addEventListener("click", (e) => {
+      e.preventDefault();
+      showPostWithComments(post);
+    });
 
     div.appendChild(headerRow);
     div.appendChild(titleEl);
