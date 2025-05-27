@@ -49,6 +49,9 @@
 }
 
 body {
+    overflow-wrap: anywhere;
+    white-space: normal;
+  word-break: break-word;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     text-align: center;
     background-color: var(--body-bg);
@@ -317,12 +320,18 @@ body {
 }
 
 .post h3 {
+    overflow-wrap: anywhere;
+    white-space: normal;
+  word-break: break-word;
     color: var(--white);
     margin: var(--spacing-sm) 0;
     font-size: 1.3rem;
 }
 
 .post p {
+    overflow-wrap: anywhere;
+    white-space: normal;
+  word-break: break-word;
     color: var(--text-medium);
     margin: var(--spacing-sm) 0;
     line-height: 1.7;
@@ -341,6 +350,9 @@ body {
 }
 
 .textcomment {
+    overflow-wrap: anywhere;
+    white-space: normal;
+  word-break: break-word;
     max-width: 550px;
     width: 100%;
     margin: auto;
@@ -363,15 +375,27 @@ body {
 /* ================ */
 .post-form,
 #comment-form {
+    overflow-wrap: anywhere;
+    white-space: normal;
+  word-break: break-word;
     display: flex;
     flex-direction: column;
     gap: var(--spacing-sm);
+}
+
+h2.comment-for-post {
+    overflow-wrap: anywhere;
+    white-space: normal;
+  word-break: break-word;
 }
 
 .post-input,
 .post-textarea,
 .input-field,
 #comment-form textarea {
+    overflow: anywhere;
+    white-space: normal;
+  word-break: break-word;
     width: 100%;
     padding: 12px;
     border-radius: var(--border-radius);

@@ -131,7 +131,8 @@ export async function showPostWithComments(post) {
   `;
 
   document.getElementById("app").innerHTML = `
-    <h2>Comments for Post: ${post.title}</h2>
+    <br>
+    <h2 id="comments-for-post">Comments for Post: ${post.title}</h2>
     <div id="comments">${commentHTML}</div>
     ${commentForm}
   `;
