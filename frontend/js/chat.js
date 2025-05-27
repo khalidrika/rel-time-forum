@@ -4,6 +4,10 @@ import { socket, updateUserStatus } from "./ws.js";
 export let currentUserId = null;
 export let currentUserNickname = null;
 
+let usersOffset = 0;
+const USERS_LIMIT = 3;
+let usersLoading = false;
+let usersEnd = false;
 
 export async function loadCurrentUser() {
     try {
@@ -19,37 +23,57 @@ export async function loadCurrentUser() {
     }
 }
 
-export async function renderUsers() {
+export async function renderUsers(reset = false) {
+    if (usersLoading || usersEnd) return;
+    usersLoading = true;
+
+    if (reset) {
+        usersOffset = 0;
+        usersEnd = false;
+        const existingList = document.querySelector(".user-list");
+        if (existingList) existingList.remove();
+    }
+
     try {
-        const res = await fetch("/api/users", {
+        const res = await fetch(`/api/users?limit=${USERS_LIMIT}&offset=${usersOffset}`, {
             method: "GET",
             credentials: "include"
         });
         if (!res.ok) throw new Error("Failed to load users");
 
         const users = await res.json();
-        const existingList = document.querySelector(".user-list");
-        if (existingList) existingList.remove();
+        if (users.length < USERS_LIMIT) usersEnd = true;
+        const usersBox = document.createElement("div");
+        usersBox.className = "users-box";
+        let usersContainer = document.querySelector(".user-list");
+        if (!usersContainer) {
+            usersContainer = document.createElement("div");
+            usersContainer.className = "user-list";
+            usersContainer.style.maxHeight = "200px";
+            usersContainer.style.overflowY = "auto";
 
-        const usersContainer = document.createElement("div");
-        usersContainer.className = "user-list";
+            const header = document.createElement("h2");
+            header.textContent = "Users";
+            header.style.marginTop= "15px";
+            usersBox.appendChild(header);
+            usersBox.appendChild(usersContainer);
+            document.getElementById("app").prepend(usersBox);
 
-        const header = document.createElement("h2");
-        header.textContent = "Users";
-        usersContainer.appendChild(header);
+            // Add scroll event
+            usersBox.addEventListener("scroll", () => {
+                if (!usersLoading && !usersEnd && usersContainer.scrollTop + usersContainer.clientHeight >= usersContainer.scrollHeight - 10) {
+                    usersLoading = true;
+                    renderUsers();
+                }
+            });
+        }
 
-        if (users.length === 0) {
-            const noUser = document.createElement("p");
-            noUser.textContent = "No users found";
-            usersContainer.appendChild(noUser);
-        } else {
-            const fragment = document.createDocumentFragment();
-            users.forEach(user => {
-                const userItem = document.createElement("div");
+        const fragment = document.createDocumentFragment();
+        users.forEach(user => {
+            const userItem = document.createElement("div");
             userItem.className = "user-item";
-            userItem.dataset.userid = user.id; //real-time updates
+            userItem.dataset.userid = user.id;
 
-            // Add online/offline indicator
             const statusDot = document.createElement("span");
             statusDot.className = "status-dot";
             statusDot.style.display = "inline-block";
@@ -58,13 +82,11 @@ export async function renderUsers() {
             statusDot.style.borderRadius = "50%";
             statusDot.style.marginRight = "8px";
             statusDot.style.backgroundColor = user.online ? "#4caf50" : "#ccc";
-            // statusDot.title = user.online ? "Online" : "Offline";
-            
+
             const nameSpan = document.createElement("span");
             nameSpan.textContent = user.nickname;
 
             const statusText = document.createElement("span");
-            
             statusText.textContent = user.online ? " (Online)" : " (Offline)";
             statusText.style.color = user.online ? "#4caf50" : "#888";
             statusText.style.fontSize = "0.9em";
@@ -75,13 +97,14 @@ export async function renderUsers() {
 
             userItem.addEventListener("click", () => openChatWindow(user));
             fragment.appendChild(userItem);
-            });
-            usersContainer.appendChild(fragment);
-        }
+        });
+        usersContainer.appendChild(fragment);
 
-        document.getElementById("app").prepend(usersContainer);
+        usersOffset += users.length;
     } catch (err) {
         console.error("Error loading users:", err);
+    } finally {
+        usersLoading = false;
     }
 }
 
