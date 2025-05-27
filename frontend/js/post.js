@@ -1,6 +1,5 @@
 import { logout } from "./auth.js";
-import { navigate } from "./routes.js";
-import { currentUserNickname } from "./chat.js";
+import { currentUserNickname, renderUsers } from "./chat.js";
 
 
 export function createNewPostModal() {
@@ -157,8 +156,9 @@ export async function showPostWithComments(post) {
   });
 
   document.getElementById("back-to-posts").addEventListener("click", () => {
-    // document.getElementById("app").innerHTML = "";
-    navigate("/home");
+    document.getElementById("app").innerHTML = "";
+    // navigate("/home");
+    renderUsers(true);
     renderPosts();
   });
 }
