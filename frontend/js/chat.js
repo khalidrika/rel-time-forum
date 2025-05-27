@@ -1,5 +1,9 @@
+/////////////////////////////////////////////////////////////////////////////////////////
+//when returning to the home page from comments the users list should be rendered again//
+// users list should be real time?                                                     //
+/////////////////////////////////////////////////////////////////////////////////////////
 import { logout } from "./auth.js";
-import { socket, updateUserStatus } from "./ws.js";
+import { socket} from "./ws.js";
 
 export let currentUserId = null;
 export let currentUserNickname = null;
@@ -59,10 +63,8 @@ export async function renderUsers(reset = false) {
             usersBox.appendChild(usersContainer);
             document.getElementById("app").prepend(usersBox);
 
-            // Add scroll event
-            usersBox.addEventListener("scroll", () => {
+            usersContainer.addEventListener("scroll", () => {
                 if (!usersLoading && !usersEnd && usersContainer.scrollTop + usersContainer.clientHeight >= usersContainer.scrollHeight - 10) {
-                    usersLoading = true;
                     renderUsers();
                 }
             });

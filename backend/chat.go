@@ -1,7 +1,6 @@
 package backend
 
 import (
-	"database/sql"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -208,9 +207,8 @@ func (m *Manager) GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		var userID int
 		var nickname string
-		var lastMsgTime sql.NullString
 
-		if err := rows.Scan(&userID, &nickname, &lastMsgTime); err != nil {
+		if err := rows.Scan(&userID, &nickname); err != nil {
 			continue
 		}
 		// Check online status
