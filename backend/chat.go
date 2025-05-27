@@ -160,6 +160,8 @@ func (m *Manager) removeclient(c *Client) {
 }
 
 func (m *Manager) GetUsersHandler(w http.ResponseWriter, r *http.Request) {
+	m.Lock()
+	defer m.Unlock()
 	id, err := GetUserIDFromRequest(r)
 	if err != nil {
 		ErrorHandler(w, "Unauthorized", http.StatusUnauthorized)

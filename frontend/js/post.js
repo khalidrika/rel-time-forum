@@ -194,11 +194,7 @@ export async function renderPosts() {
   addButton.textContent = "+";
   app.appendChild(addButton);
 
-  const logoutButton = document.createElement("button");
-  logoutButton.id = "logout";
-  logoutButton.className = "submit-logot";
-  logoutButton.textContent = "Logout";
-  app.appendChild(logoutButton);
+  renderLogout();
 
   const postsContainer = document.createElement("div");
   postsContainer.className = "postscontainer";
@@ -226,7 +222,16 @@ export async function renderPosts() {
   logoutBtn?.addEventListener("click", logout);
 }
 
+export function renderLogout() {
+  const app = document.getElementById("app");
 
+  const logoutButton = document.createElement("button");
+  logoutButton.id = "logout";
+  logoutButton.className = "submit-logout";
+  logoutButton.textContent = "Logout";
+  app.appendChild(logoutButton);
+
+}
 function createPosts(posts, postscontainer, possition) {
   for (let post of posts) {
     const div = document.createElement("div");

@@ -131,7 +131,7 @@ body {
     background-color: var(--success-hover);
 }
 
-.submit-logot {
+.submit-logout {
     border-radius: 7px;
     position: fixed;
     top: 15px;
