@@ -51,7 +51,7 @@
 body {
     overflow-wrap: anywhere;
     white-space: normal;
-  word-break: break-word;
+    word-break: break-word;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     text-align: center;
     background-color: var(--body-bg);
@@ -251,6 +251,24 @@ body {
 /* ================ */
 /* === User List === */
 /* ================ */
+#sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100vh;
+    overflow-y: auto;
+    background-color: #1e272e;
+    padding: 15px;
+    z-index: 999;
+    border-right: 1px solid #444;
+}
+
+#app {
+    margin-left: 260px;
+    padding: 20px;
+}
+
 .user-list {
     background-color: var(--card-bg);
     border: 1px solid var(--border-color);
@@ -322,7 +340,7 @@ body {
 .post h3 {
     overflow-wrap: anywhere;
     white-space: normal;
-  word-break: break-word;
+    word-break: break-word;
     color: var(--white);
     margin: var(--spacing-sm) 0;
     font-size: 1.3rem;
@@ -331,7 +349,7 @@ body {
 .post p {
     overflow-wrap: anywhere;
     white-space: normal;
-  word-break: break-word;
+    word-break: break-word;
     color: var(--text-medium);
     margin: var(--spacing-sm) 0;
     line-height: 1.7;
@@ -352,7 +370,7 @@ body {
 .textcomment {
     overflow-wrap: anywhere;
     white-space: normal;
-  word-break: break-word;
+    word-break: break-word;
     max-width: 550px;
     width: 100%;
     margin: auto;
@@ -377,7 +395,7 @@ body {
 #comment-form {
     overflow-wrap: anywhere;
     white-space: normal;
-  word-break: break-word;
+    word-break: break-word;
     display: flex;
     flex-direction: column;
     gap: var(--spacing-sm);
@@ -386,7 +404,7 @@ body {
 h2.comment-for-post {
     overflow-wrap: anywhere;
     white-space: normal;
-  word-break: break-word;
+    word-break: break-word;
 }
 
 .post-input,
@@ -395,7 +413,7 @@ h2.comment-for-post {
 #comment-form textarea {
     overflow: anywhere;
     white-space: normal;
-  word-break: break-word;
+    word-break: break-word;
     width: 100%;
     padding: 12px;
     border-radius: var(--border-radius);

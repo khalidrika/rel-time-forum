@@ -162,43 +162,32 @@ func (m *Manager) removeclient(c *Client) {
 func (m *Manager) GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 	m.Lock()
 	defer m.Unlock()
+
 	id, err := GetUserIDFromRequest(r)
 	if err != nil {
 		ErrorHandler(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
 
-	limitStr := r.URL.Query().Get("limit")
-	offsetStr := r.URL.Query().Get("offset")
-	limit := 4
-	offset := 0
-	if l, err := strconv.Atoi(limitStr); err == nil && l > 0 {
-		limit = l
-	}
-	if o, err := strconv.Atoi(offsetStr); err == nil && o >= 0 {
-		offset = o
-	}
-
 	rows, err := DB.Query(`
-    SELECT 
-        u.id, 
-        u.nickname
-    FROM users u
-    WHERE u.id <> ?
-    ORDER BY 
-        (
-            SELECT MAX(m.created_at)
-            FROM messages m
-            WHERE (m.sender_id = u.id AND m.receiver_id = ?) OR (m.sender_id = ? AND m.receiver_id = u.id)
-        ) IS NULL,
-        (
-            SELECT MAX(m.created_at)
-            FROM messages m
-            WHERE (m.sender_id = u.id AND m.receiver_id = ?) OR (m.sender_id = ? AND m.receiver_id = u.id)
-        ) DESC,
-        u.nickname ASC
-    LIMIT ? OFFSET ?
-`, id, id, id, id, id, limit, offset)
+		SELECT 
+			u.id, 
+			u.nickname
+		FROM users u
+		WHERE u.id <> ?
+		ORDER BY 
+			(
+				SELECT MAX(m.created_at)
+				FROM messages m
+				WHERE (m.sender_id = u.id AND m.receiver_id = ?) OR (m.sender_id = ? AND m.receiver_id = u.id)
+			) IS NULL,
+			(
+				SELECT MAX(m.created_at)
+				FROM messages m
+				WHERE (m.sender_id = u.id AND m.receiver_id = ?) OR (m.sender_id = ? AND m.receiver_id = u.id)
+			) DESC,
+			u.nickname ASC
+	`, id, id, id, id, id)
 	if err != nil {
 		ErrorHandler(w, "Database error", http.StatusInternalServerError)
 		return
@@ -213,11 +202,12 @@ func (m *Manager) GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 		if err := rows.Scan(&userID, &nickname); err != nil {
 			continue
 		}
-		// Check online status
+
 		online := false
 		if clients, ok := m.Users[userID]; ok && len(clients) > 0 {
 			online = true
 		}
+
 		users = append(users, map[string]interface{}{
 			"id":       userID,
 			"nickname": nickname,

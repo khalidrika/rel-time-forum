@@ -3,7 +3,7 @@
 // users list should be real time?                                                     //
 /////////////////////////////////////////////////////////////////////////////////////////
 import { logout } from "./auth.js";
-import { socket} from "./ws.js";
+import { socket } from "./ws.js";
 
 export let currentUserId = null;
 export let currentUserNickname = null;
@@ -27,48 +27,30 @@ export async function loadCurrentUser() {
     }
 }
 
-export async function renderUsers(reset = false) {
-    if (usersLoading || usersEnd) return;
-    usersLoading = true;
-
-    if (reset) {
-        usersOffset = 0;
-        usersEnd = false;
+export async function renderUsers() {
+    try {
         const existingList = document.querySelector(".user-list");
         if (existingList) existingList.remove();
-    }
 
-    try {
-        const res = await fetch(`/api/users?limit=${USERS_LIMIT}&offset=${usersOffset}`, {
+        const res = await fetch(`/api/users`, {
             method: "GET",
             credentials: "include"
         });
         if (!res.ok) throw new Error("Failed to load users");
 
         const users = await res.json();
-        if (users.length < USERS_LIMIT) usersEnd = true;
+
         const usersBox = document.createElement("div");
         usersBox.className = "users-box";
-        let usersContainer = document.querySelector(".user-list");
-        if (!usersContainer) {
-            usersContainer = document.createElement("div");
-            usersContainer.className = "user-list";
-            usersContainer.style.maxHeight = "200px";
-            usersContainer.style.overflowY = "auto";
 
-            const header = document.createElement("h2");
-            header.textContent = "Users";
-            header.style.marginTop= "15px";
-            usersBox.appendChild(header);
-            usersBox.appendChild(usersContainer);
-            document.getElementById("app").prepend(usersBox);
+        const usersContainer = document.createElement("div");
+        usersContainer.className = "user-list";
 
-            usersContainer.addEventListener("scroll", () => {
-                if (!usersLoading && !usersEnd && usersContainer.scrollTop + usersContainer.clientHeight >= usersContainer.scrollHeight - 10) {
-                    renderUsers();
-                }
-            });
-        }
+        const header = document.createElement("h2");
+        header.textContent = "Users";
+        usersBox.appendChild(header);
+        usersBox.appendChild(usersContainer);
+        document.getElementById("sidebar").prepend(usersBox);
 
         const fragment = document.createDocumentFragment();
         users.forEach(user => {
@@ -78,11 +60,6 @@ export async function renderUsers(reset = false) {
 
             const statusDot = document.createElement("span");
             statusDot.className = "status-dot";
-            statusDot.style.display = "inline-block";
-            statusDot.style.width = "10px";
-            statusDot.style.height = "10px";
-            statusDot.style.borderRadius = "50%";
-            statusDot.style.marginRight = "8px";
             statusDot.style.backgroundColor = user.online ? "#4caf50" : "#ccc";
 
             const nameSpan = document.createElement("span");
@@ -91,24 +68,21 @@ export async function renderUsers(reset = false) {
             const statusText = document.createElement("span");
             statusText.textContent = user.online ? " (Online)" : " (Offline)";
             statusText.style.color = user.online ? "#4caf50" : "#888";
-            statusText.style.fontSize = "0.9em";
 
             userItem.appendChild(statusDot);
             userItem.appendChild(nameSpan);
             userItem.appendChild(statusText);
-
             userItem.addEventListener("click", () => openChatWindow(user));
+
             fragment.appendChild(userItem);
         });
-        usersContainer.appendChild(fragment);
 
-        usersOffset += users.length;
+        usersContainer.appendChild(fragment);
     } catch (err) {
         console.error("Error loading users:", err);
-    } finally {
-        usersLoading = false;
     }
 }
+
 
 export function buildMessageElement(msg) {
     const msgEl = document.createElement("div");
@@ -176,7 +150,7 @@ export function createChatbox(user) {
     return { messages, chatBox };
 }
 
-export async function openChatWindow(user) {    
+export async function openChatWindow(user) {
     if (!user || !user.id) return;
 
     const existingBox = document.querySelector(".-chatbox");
@@ -192,7 +166,7 @@ export async function openChatWindow(user) {
         isLoading = true;
 
         try {
-            
+
             const res = await fetch(`/api/messages?userId=${user.id}&offset=${offset}`);
             if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
 
