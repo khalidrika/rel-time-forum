@@ -1,4 +1,4 @@
-import { buildMessageElement, currentUserId} from "./chat.js";
+import { buildMessageElement, currentUserId } from "./chat.js";
 
 export let socket = null
 export function UpgredConnetion() {
