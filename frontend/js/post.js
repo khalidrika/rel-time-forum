@@ -161,6 +161,7 @@ export async function showPostWithComments(post) {
     renderUsers(true);
     renderPosts();
   });
+  renderLogout();
 }
 
 
@@ -230,6 +231,7 @@ export function renderLogout() {
   logoutButton.className = "submit-logout";
   logoutButton.textContent = "Logout";
   app.appendChild(logoutButton);
+  logoutButton?.addEventListener("click", logout);
 
 }
 function createPosts(posts, postscontainer, possition) {
