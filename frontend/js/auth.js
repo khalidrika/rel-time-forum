@@ -49,9 +49,8 @@ export function renderLoginForm() {
 
     const data = await res.json();
     if (!res.ok) {
-      console.log("WWWWWWW");
+      // console.log("WWWWWWW");
       document.getElementById("error").textContent = data.error || "Login failed";
-
       return;
     }
 
@@ -155,13 +154,17 @@ async function handleRegister(e) {
   }
 
   alert("Registration successful! Welcome " + data.nickname);
+  document.getElementById("app").innerHTML = "";
+  const sidebar = document.getElementById("sidebar");
+  if (sidebar) sidebar.innerHTML = "";
+
   renderLoginForm(); // redirect to login
 }
 
 export async function logout() {
   const res = await fetch('/api/logout', { method: 'POST' });
-    // alert('Logged out successfully!');
-    // window.location.reload();
-    navigate("/login");
-    socket.close()
+  // alert('Logged out successfully!');
+  // window.location.reload();
+  navigate("/login");
+  socket.close()
 }

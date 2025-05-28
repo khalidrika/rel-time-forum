@@ -4,10 +4,18 @@ import { renderPosts } from "./post.js";
 import { socketEvent, UpgredConnetion } from "./ws.js";
 
 let routes = {};
+export function clearpage() {
+  document.getElementById("app").innerHTML = "";
+  const sidebar = document.getElementById("sidebar");
+  if (sidebar) sidebar.innerHTML = "";
 
+}
 window.addEventListener("DOMContentLoaded", () => {
   routes = {
-    '/login': renderLoginForm,
+    '/login': () => {
+      clearpage();
+      renderLoginForm();
+    },
     '/register': renderRegisterForm,
     '/home': async () => {
       try {
@@ -15,7 +23,10 @@ window.addEventListener("DOMContentLoaded", () => {
         await loadCurrentUser();
         UpgredConnetion();
         socketEvent();
+        // const userlist = document.getElementsByClassName("user-list")
+        // if (userlist) {
         renderUsers();
+        // }
       } catch (error) {
         console.error("Failed to render posts:", error);
       }

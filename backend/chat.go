@@ -27,6 +27,8 @@ type Message struct {
 }
 
 func (m *Manager) ChatHandler(w http.ResponseWriter, r *http.Request) {
+	// m.Lock()
+	// defer m.Unlock()
 	cookie, err := r.Cookie("session_token")
 	if err != nil {
 		ErrorHandler(w, "Unauthorized", http.StatusUnauthorized)
@@ -124,6 +126,8 @@ func InsertMsg(msg string, from, to int) error {
 }
 
 func (m *Manager) broadcast(id int, message Message) {
+	m.Lock()
+	defer m.Unlock()
 	clients, ok := m.Users[id]
 
 	if !ok || len(clients) == 0 {
@@ -140,6 +144,8 @@ func (m *Manager) broadcast(id int, message Message) {
 }
 
 func (m *Manager) removeclient(c *Client) {
+	// m.Lock()
+	// defer m.Unlock()
 	clients, ok := m.Users[c.Id]
 	if !ok {
 		return
@@ -220,6 +226,8 @@ func (m *Manager) GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *Manager) broadcastStatus(userID int, online bool) {
+	m.Lock()
+	defer m.Unlock()
 	statusMsg := map[string]interface{}{
 		"type":   "status",
 		"userId": userID,
