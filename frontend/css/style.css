@@ -178,15 +178,26 @@ body {
 .message-header {
     display: flex;
     justify-content: space-between;
-    font-size: 0.75rem;
-    margin-bottom: 6px;
-    color: rgba(255, 255, 255, 0.8);
+    align-items: center;
+    gap: 8px;
 }
 
 .message-header strong {
-    color: var(--white);
-    font-weight: 600;
+    cursor: help;
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
 }
+
+.message-header .created {
+    /* font-size: 0.8em; */
+    color: #aaa;
+    cursor: help;
+}
+
+
 
 .created {
     display: block;

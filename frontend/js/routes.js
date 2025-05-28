@@ -23,10 +23,7 @@ window.addEventListener("DOMContentLoaded", () => {
         await loadCurrentUser();
         UpgredConnetion();
         socketEvent();
-        // const userlist = document.getElementsByClassName("user-list")
-        // if (userlist) {
         renderUsers();
-        // }
       } catch (error) {
         console.error("Failed to render posts:", error);
       }
