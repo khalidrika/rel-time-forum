@@ -42,16 +42,14 @@
     margin-top: 70px;
 }
 
-.user-item.unread {
-    background-color: #2c3e50;
-    /* أو أي لون تريده للمؤشر */
-    color: white;
+.user-item .notification-dot {
+    width: 8px;
+    height: 8px;
+    background-color: red;
+    border-radius: 50%;
+    display: inline-block;
+    margin-left: 6px;
 }
-
-.user-item.unread span:first-child {
-    border: 2px solid red;
-}
-
 
 /* ================ */
 /* === Base Styles === */

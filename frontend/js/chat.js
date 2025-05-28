@@ -94,9 +94,10 @@ function moveUserListForResponsive() {
 
     if (window.innerWidth <= 700) {
         if (!app.contains(userList)) {
-            app.prepend(userList);
-        }
 
+            app.prepend(userList);
+
+        }
         userList.prepend(usersHeader);
     } else {
         if (sidebar && !sidebar.contains(userList)) {
@@ -195,17 +196,15 @@ export async function openChatWindow(user) {
     let isLoading = false;
     let hasMoreMessages = true;
 
-
-    const userItem = document.querySelector(`.user-item[data-userid="${user.id}"]`);
-    const dot = userItem?.querySelector(".notification-dot");
-    if (dot) dot.remove();
-
-
-
-
     async function loadMessages() {
         if (isLoading || !hasMoreMessages) return;
         isLoading = true;
+
+
+        const userItem = document.querySelector(`.user-item[data-userid="${user.id}"]`);
+        const dot = userItem?.querySelector(".notification-dot");
+        if (dot) dot.remove();
+
 
         try {
 
