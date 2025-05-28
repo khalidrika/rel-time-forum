@@ -26,6 +26,26 @@ export function socketEvent() {
             return;
         }
 
+        // Handle notification event
+        if (msg.type === "notification") {
+            // Use browser Notification API if available, else fallback to alert
+            if (window.Notification && Notification.permission === "granted") {
+                new Notification(msg.title, { body: msg.body });
+            } else if (window.Notification && Notification.permission !== "denied") {
+                Notification.requestPermission().then(permission => {
+                    new Notification(msg.title, { body: msg.body });
+                    if (permission === "granted") {
+                        
+                    } else {
+                        alert(msg.body);
+                    }
+                });
+            } else {
+                alert(msg.body);
+            }
+            return;
+        }
+
         const senderchat = document.getElementById(`${msg.to}`);
         console.log(msg.to);
 

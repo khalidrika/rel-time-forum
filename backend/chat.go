@@ -108,6 +108,10 @@ func (m *Manager) ChatHandler(w http.ResponseWriter, r *http.Request) {
 						}
 					}
 				}
+				// Send notification to the receiver
+				if msg.To != client.Id {
+					m.sendNotification(msg.To, client.Nickname, msg.Content)
+				}
 			}
 		} else {
 			log.Println("failde to insert:", err)
@@ -294,4 +298,21 @@ func GetMessagesHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(messages)
+}
+
+// Send notification to receiver when a new message is received
+func (m *Manager) sendNotification(userID int, fromName string, content string) {
+	m.Lock()
+	defer m.Unlock()
+	notification := map[string]any{
+		"type":  "notification",
+		"title": "New Message",
+		"body":  fromName + ": " + content,
+	}
+	clients, ok := m.Users[userID]
+	if ok {
+		for _, client := range clients {
+			client.Conn.WriteJSON(notification)
+		}
+	}
 }
