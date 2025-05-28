@@ -92,12 +92,21 @@ export function buildMessageElement(msg) {
     header.className = "message-header";
 
     const sender = document.createElement("strong");
-    sender.textContent = msg.from_name || "User";
+
+    const fullName = msg.from_name || "User";
+    const displayName = fullName.length > 10 ? fullName.slice(0, 10) + "..." : fullName;
+
+    sender.textContent = displayName;
+    sender.title = fullName;
 
     const createdAt = document.createElement("span");
     createdAt.className = "created";
-    createdAt.textContent = new Date(msg.createdat).toLocaleString();
 
+    const date = new Date(msg.createdat);
+    createdAt.textContent = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // مثل: 14:05
+    createdAt.title = date.toLocaleString();
+
+    // createdAt.textContent = new Date(msg.createdat).toLocaleString();
     header.append(sender, createdAt);
 
     const content = document.createElement("div");
@@ -106,6 +115,7 @@ export function buildMessageElement(msg) {
     msgEl.append(header, content);
     return msgEl;
 }
+
 
 export function createChatbox(user) {
     const anyOpenBox = document.querySelector(".chat-box");
