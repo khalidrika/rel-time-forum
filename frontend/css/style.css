@@ -42,6 +42,17 @@
     margin-top: 70px;
 }
 
+.user-item.unread {
+    background-color: #2c3e50;
+    /* أو أي لون تريده للمؤشر */
+    color: white;
+}
+
+.user-item.unread span:first-child {
+    border: 2px solid red;
+}
+
+
 /* ================ */
 /* === Base Styles === */
 /* ================ */
@@ -617,18 +628,22 @@ h2.comment-for-post {
     .post {
         width: 98%;
     }
+
     .chat-box {
         width: 35%;
         position: right;
     }
+
     .chat-input-container {
         flex-direction: column;
         gap: 4px;
     }
+
     .chat-box input {
         font-size: 1em;
         padding: 8px;
     }
+
     .chat-box button {
         font-size: 1em;
         padding: 8px 12px;
@@ -692,23 +707,28 @@ h2.comment-for-post {
         width: 30%;
         bottom: 0;
     }
+
     .messages {
         height: 40vh;
         min-height: 180px;
         padding: 6px;
     }
+
     .chat-header {
         font-size: 1.1em;
         padding-bottom: 4px;
     }
+
     .chat-input-container {
         flex-direction: column;
         gap: 4px;
     }
+
     .chat-box input {
         font-size: 1em;
         padding: 8px;
     }
+
     .chat-box button {
         font-size: 1em;
         padding: 8px 12px;
