@@ -393,8 +393,9 @@ body {
 
 .sendcomment,
 .back-button {
+    width: 100%;
     border-radius: 7px;
-    width: 10%;
+    max-width: 150px;
     margin: auto;
     height: 30px;
 }
