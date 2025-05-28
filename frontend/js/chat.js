@@ -8,10 +8,10 @@ import { socket } from "./ws.js";
 export let currentUserId = null;
 export let currentUserNickname = null;
 
-let usersOffset = 0;
-const USERS_LIMIT = 3;
-let usersLoading = false;
-let usersEnd = false;
+// let usersOffset = 0;
+// const USERS_LIMIT = 3;
+// let usersLoading = false;
+// let usersEnd = false;
 
 export async function loadCurrentUser() {
     try {

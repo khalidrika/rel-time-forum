@@ -158,7 +158,7 @@ export async function showPostWithComments(post) {
   document.getElementById("back-to-posts").addEventListener("click", () => {
     document.getElementById("app").innerHTML = "";
     // navigate("/home");
-    renderUsers(true);
+    // renderUsers(true);
     renderPosts();
   });
   renderLogout();
@@ -274,7 +274,7 @@ function createPosts(posts, postscontainer, possition) {
       e.preventDefault();
       showPostWithComments(post);
     });
-    
+
     div?.addEventListener("click", (e) => {
       e.preventDefault();
       showPostWithComments(post);
