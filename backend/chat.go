@@ -74,6 +74,8 @@ func (m *Manager) ChatHandler(w http.ResponseWriter, r *http.Request) {
 
 		msg.From = client.Id
 		if msg.Token != client.Token {
+			
+			m.broadcastStatus(client.Id, false)
 			log.Println("not same")
 			return
 		}

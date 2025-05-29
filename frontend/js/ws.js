@@ -26,40 +26,52 @@ export function socketEvent() {
             return;
         }
 
-        if (msg.type === "notification") {
-            const iconUrl = "/images/aa.pjj"; // مسار الصورة على السيرفر
+        // if (msg.type === "notification") {
+        //     if (window.Notification && Notification.permission === "granted") {
+        //         new Notification(msg.title, { body: msg.body, icon: iconUrl });
+        //     } else if (window.Notification && Notification.permission !== "denied") {
+        //         Notification.requestPermission().then(permission => {
+        //             if (permission === "granted") {
+        //                 new Notification(msg.title, { body: msg.body, icon: iconUrl });
+        //             }
+        //         });
+        //     }
 
-            if (window.Notification && Notification.permission === "granted") {
-                new Notification(msg.title, { body: msg.body, icon: iconUrl });
-            } else if (window.Notification && Notification.permission !== "denied") {
-                Notification.requestPermission().then(permission => {
-                    if (permission === "granted") {
-                        new Notification(msg.title, { body: msg.body, icon: iconUrl });
-                    }
-                });
-            }
-
-            return;
-        }
+        //     return;
+        // }
 
         const senderchat = document.getElementById(`${msg.to}`);
         console.log(msg.to);
+        console.log(msg.from);
 
         const receivechat = document.querySelector(`div[data-user-id="${msg.from}"]`);
-        console.log(receivechat);
+        console.log(receivechat, senderchat);
 
         // console.log(activeChat);
         if (senderchat) {
             writeMessage(msg);
+            console.log("Weeeeeeeeeeeeeeee");
+
 
         } else if (receivechat) {
+            console.log("===============>");
             writeMessage(msg);
         } else {
-            const userItem = document.querySelector(`.user-item[data-userid="${msg.from}"]`);
-            if (userItem && !userItem.querySelector(".notification-dot")) {
-                const dot = document.createElement("span");
-                dot.className = "notification-dot";
-                userItem.appendChild(dot);
+            const users_box = document.querySelector(`.user-item[data-userid="${msg.from}"]`);
+            const X = document.querySelector(`.users-box`);
+            console.log("wwwwww", users_box);
+
+            if (users_box && !users_box.querySelector(".notification-dot")) {
+                const notif = document.createElement("div");
+                notif.className = "notification-dot";
+                notif.textContent = `New message from ${msg.to}`
+                X.insertBefore(notif, X.firstChild)
+                console.log("888888888888888");
+
+                setInterval(() => {
+                    notif.remove();
+                }, 2000);
+
             }
         }
 

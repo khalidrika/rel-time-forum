@@ -10,6 +10,7 @@ export function clearpage() {
   if (sidebar) sidebar.innerHTML = "";
 
 }
+export let clearintirval
 window.addEventListener("DOMContentLoaded", () => {
   routes = {
     '/login': () => {
@@ -24,6 +25,12 @@ window.addEventListener("DOMContentLoaded", () => {
         UpgredConnetion();
         socketEvent();
         renderUsers();
+
+
+        clearintirval = setInterval(() => {
+          renderUsers();
+        }, 1000);/////
+
       } catch (error) {
         console.error("Failed to render posts:", error);
       }
