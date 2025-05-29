@@ -819,3 +819,11 @@ h2.comment-for-post {
         margin-top: 20px;
     }
 }
+
+.chat-container {
+    position: relative;
+}
+
+.typing-indicator {
+    position: absolute;
+}
