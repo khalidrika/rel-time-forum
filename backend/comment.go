@@ -2,6 +2,7 @@ package backend
 
 import (
 	"encoding/json"
+	"html"
 	"log"
 	"net/http"
 	"strconv"
@@ -55,6 +56,7 @@ func CreateCommentHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	req.Content = html.EscapeString(req.Content)
 	stmt, err := DB.Prepare("INSERT INTO comments (post_id, user_id, content, created_at) VALUES (?, ?, ?, ?)")
 	if err != nil {
 		ErrorHandler(w, "Failed to prepare statement", http.StatusInternalServerError)

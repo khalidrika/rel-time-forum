@@ -164,8 +164,6 @@ export async function showPostWithComments(post) {
   renderLogout();
 }
 
-
-
 // add post
 function attachPostModalEvents() {
   // Floating action button (add post button)
@@ -234,6 +232,7 @@ export function renderLogout() {
   logoutButton?.addEventListener("click", logout);
 
 }
+
 function createPosts(posts, postscontainer, possition) {
   for (let post of posts) {
     const div = document.createElement("div");
