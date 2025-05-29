@@ -69,43 +69,42 @@ export function renderRegisterForm() {
   <div class="modal-dialog">
   <div id="signUpContainer" class="form-container">
     <h2 class="modal-title">Register</h2>
-    <form id="register-form" class="auth-from">
+    <form id="register-form" class="auth-from" autocomplete="off">
         <label for="signUpNickName">
-        NickName
-          <span>*</sapn>
+        NickName<span>*</span>
         </label>
-    <input type="text" name="nickname" id="signUpNickName" class="input-field" placeholder="Nickname" required />
+    <input type="text" name="nickname" id="signUpNickName" class="input-field" placeholder="Nickname" required pattern="^[A-Za-z0-9_]{3,20}$" maxlength="20" />
         <label for="signUpAge">
         Age
-          <span>*</sapn>
+          <span>*</span>
         </label>
-    <input type="number" name="age" placeholder="Age" id="signUpAge" class="input-field" required />
-            <label for="signUpGender">
+    <input type="number" name="age" placeholder="Age" id="signUpAge" class="input-field" required min="6" max="120" />
+        <label for="signUpGender">
             Gender
-          <span>*</sapn>
+          <span>*</span>
         </label>
-    <input type="text" name="gender" placeholder="Gender" id="signUpGender" class="input-field" required />
+    <input type="text" name="gender" placeholder="Gender (Male/Female)" id="signUpGender" class="input-field" required maxlength="10"/>
             <label for="signUpFirstName">
-            Yor First Name
-          <span>*</sapn>
+            Your First Name
+          <span>*</span>
         </label>
-    <input type="text" name="firstName" placeholder="First Name" id="signUpFirtName" class="input-field" required />
+    <input type="text" name="firstName" placeholder="First Name" id="signUpFirstName" class="input-field" required pattern="^[A-Za-z]{2,30}$" maxlength="30" />
             <label for="signUpLastName">
             Your Last Name
-          <span>*</sapn>
+          <span>*</span>
         </label>
-    <input type="text" name="lastName" placeholder="Last Name" id="signUpLastName" class="input-field" required />
+    <input type="text" name="lastName" placeholder="Last Name" id="signUpLastName" class="input-field" required pattern="^[A-Za-z]{2,30}$" maxlength="30" />
             <label for="signUpEmail">
-            Youe Email
-          <span>*</sapn>
+            Your Email
+          <span>*</span>
         </label>
-      <input type="email" name="email" placeholder="Email" id="signUpEmail" class="input-field" required />
+      <input type="email" name="email" placeholder="Email" id="signUpEmail" class="input-field" required maxlength="100" />
               <label for="signUpPassword">
               Password
-          <span>*</sapn>
+          <span>*</span>
         </label>
-      <input type="password" name="password" placeholder="Password" id="signUpPassword" class="input-field" required />
-      <button type="submit" id="signUpSubmit" class="submit-button disbled" >Register</button>
+      <input type="password" name="password" placeholder="Password" id="signUpPassword" class="input-field" required minlength="4" maxlength="100" />
+      <button type="submit" id="signUpSubmit" class="submit-button">Register</button>
     </form>
 <p>Already have an account? <a href="#" id="show-login">Login here</a></p>
     <div id="error" style="color: red;"></div>
@@ -119,26 +118,61 @@ export function renderRegisterForm() {
   document.getElementById("show-login").addEventListener("click", (e) => {
     e.preventDefault();
     navigate("/login")
-    // renderLoginForm();
   });
-  document.getElementById("register-form").addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-  })
 }
 
-//ff
 async function handleRegister(e) {
   e.preventDefault();
-  const formData = new FormData(e.target);
+  const form = e.target;
+  const errorDiv = document.getElementById("error");
+
+  // Custom JS validation
+  const nickname = form.nickname.value.trim();
+  const age = Number(form.age.value);
+  const gender = form.gender.value.trim();
+  const firstName = form.firstName.value.trim();
+  const lastName = form.lastName.value.trim();
+  const email = form.email.value.trim();
+  const password = form.password.value;
+
+  if (!/^[A-Za-z0-9_]{3,20}$/.test(nickname)) {
+    errorDiv.textContent = "Nickname must be 3-20 characters, letters, numbers, or underscores.";
+    return;
+  }
+  if (age < 6 || age > 120) {
+    errorDiv.textContent = "Age must be between 6 and 120.";
+    return;
+  }
+  if (!/^(Male|Female)$/i.test(gender)) {
+    errorDiv.textContent = "Gender must be Male or Female.";
+    return;
+  }
+  if (!/^[A-Za-z]{2,30}$/.test(firstName)) {
+    errorDiv.textContent = "First name must be 2-30 letters.";
+    return;
+  }
+  if (!/^[A-Za-z]{2,30}$/.test(lastName)) {
+    errorDiv.textContent = "Last name must be 2-30 letters.";
+    return;
+  }
+  if (!/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
+    errorDiv.textContent = "Invalid email format.";
+    return;
+  }
+  if (password.length < 4 || password.length > 50) {
+    errorDiv.textContent = "Password must be at least 8 characters.";
+    return;
+  }
+
+  const formData = new FormData(form);
   const payload = {
-    nickname: formData.get("nickname"),
-    age: Number(formData.get("age")),
-    gender: formData.get("gender"),
-    firstName: formData.get("firstName"),
-    lastName: formData.get("lastName"),
-    email: formData.get("email"),
-    password: formData.get("password")
+    nickname: nickname,
+    age: age,
+    gender: gender,
+    firstName: firstName,
+    lastName: lastName,
+    email: email,
+    password: password
   };
 
   const res = await fetch("/api/register", {
@@ -149,7 +183,7 @@ async function handleRegister(e) {
 
   const data = await res.json();
   if (!res.ok) {
-    document.getElementById("error").textContent = data.error || "Registration failed";
+    errorDiv.textContent = data.error || "Registration failed";
     return;
   }
 

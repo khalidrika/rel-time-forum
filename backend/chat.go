@@ -13,9 +13,6 @@ import (
 var upgrade = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
-	CheckOrigin: func(r *http.Request) bool {
-		return true
-	},
 }
 
 type Message struct {
@@ -74,7 +71,7 @@ func (m *Manager) ChatHandler(w http.ResponseWriter, r *http.Request) {
 
 		msg.From = client.Id
 		if msg.Token != client.Token {
-			
+
 			m.broadcastStatus(client.Id, false)
 			log.Println("not same")
 			return
