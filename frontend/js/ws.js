@@ -91,6 +91,49 @@ export function socketEvent() {
                 usersContainer.prepend(userItem);
             }
         }
+        //new user
+        if (msg.type === "new_user") {
+            // Check if user already exists (prevent duplicates)
+            const existingUser = document.querySelector(`.user-item[data-userid="${msg.userId}"]`);
+            if (existingUser) return;
+
+            // Create and append user item to the list
+            const usersContainer = document.querySelector(".user-list");
+            if (!usersContainer) return;
+
+            const userItem = document.createElement("div");
+            userItem.className = "user-item";
+            userItem.dataset.userid = msg.userId;
+
+            const statusDot = document.createElement("span");
+            statusDot.className = "status-dot";
+            statusDot.style.backgroundColor = msg.online ? "#4caf50" : "#ccc";
+
+            const nameSpan = document.createElement("span");
+            nameSpan.textContent = msg.nickname;
+
+            const statusText = document.createElement("span");
+            statusText.textContent = msg.online ? " (Online)" : " (Offline)";
+            statusText.style.color = msg.online ? "#4caf50" : "#888";
+
+            const notifDot = document.createElement("span");
+            notifDot.className = "notification-dot";
+            notifDot.style.display = "none";
+            notifDot.style.width = "8px";
+            notifDot.style.height = "8px";
+            notifDot.style.borderRadius = "50%";
+            notifDot.style.backgroundColor = "red";
+            notifDot.style.marginLeft = "6px";
+
+            userItem.append(statusDot, nameSpan, statusText, notifDot);
+            userItem.addEventListener("click", () => openChatWindow({
+                id: msg.userId,
+                nickname: msg.nickname,
+                online: msg.online,
+            }));
+
+            usersContainer.prepend(userItem);
+        }
 
     }
     socket.onclose = () => {
