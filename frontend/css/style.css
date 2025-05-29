@@ -42,13 +42,20 @@
     margin-top: 70px;
 }
 
-.user-item .notification-dot {
-    width: 8px;
-    height: 8px;
-    background-color: red;
-    border-radius: 50%;
+/* .notificationcon {
+    width: 50px;
+    height: 50px;
+    background-color: #219653;
+} */
+
+.notification-dot {
+    width: 200px;
+    height: 50px;
+    background-color: lightcoral;
+    border-radius: 16%;
     display: inline-block;
     margin-left: 6px;
+    color: #1a252f;
 }
 
 /* ================ */

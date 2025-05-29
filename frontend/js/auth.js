@@ -1,4 +1,4 @@
-import { navigate } from "./routes.js";
+import { clearintirval, navigate } from "./routes.js";
 import { renderPosts } from "./post.js";
 import { socket } from "./ws.js";
 export function renderLoginForm() {
@@ -162,6 +162,7 @@ async function handleRegister(e) {
 }
 
 export async function logout() {
+  clearInterval(clearintirval)
   const res = await fetch('/api/logout', { method: 'POST' });
   // alert('Logged out successfully!');
   // window.location.reload();

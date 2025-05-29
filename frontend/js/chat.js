@@ -27,31 +27,42 @@ export async function loadCurrentUser() {
     }
 }
 
+let usersLoading = false;
+
 export async function renderUsers() {
+    if (usersLoading) return;
+    usersLoading = true;
     try {
-        const existingList = document.querySelector(".user-list");
-        if (existingList) existingList.remove();
+        // const existingList = document.querySelector(".user-list");
+        // if (existingList) existingList.remove();
 
         const res = await fetch(`/api/users`, {
             method: "GET",
             credentials: "include"
         });
-        if (!res.ok) throw new Error("Failed to load users");
+
+        if (!res.ok) logout();
 
         const users = await res.json();
 
-        const usersBox = document.createElement("div");
-        usersBox.className = "users-box";
+        let usersContainer = document.querySelector(".user-list");
+        if (!usersContainer) {
+            const usersBox = document.createElement("div");
+            usersBox.className = "users-box";
 
-        const usersContainer = document.createElement("div");
-        usersContainer.className = "user-list";
+            usersContainer = document.createElement("div");
+            usersContainer.className = "user-list";
 
-        const header = document.createElement("h2");
-        header.id = "users-header";
-        header.textContent = "Users";
-        usersBox.appendChild(header);
-        usersBox.appendChild(usersContainer);
-        document.getElementById("sidebar").prepend(usersBox);
+            const header = document.createElement("h2");
+            header.id = "users-header";
+            header.textContent = "Users";
+
+            usersBox.appendChild(header);
+            usersBox.appendChild(usersContainer);
+            document.getElementById("sidebar").prepend(usersBox);
+        } else {
+            usersContainer.innerHTML = "";
+        }
 
         const fragment = document.createDocumentFragment();
         users.forEach(user => {
@@ -59,7 +70,7 @@ export async function renderUsers() {
             userItem.className = "user-item";
             userItem.dataset.userid = user.id;
 
-            const statusDot = document.createElement("span");
+            const statusDot = document.createElement("div");
             statusDot.className = "status-dot";
             statusDot.style.backgroundColor = user.online ? "#4caf50" : "#ccc";
 
@@ -81,6 +92,8 @@ export async function renderUsers() {
         usersContainer.appendChild(fragment);
     } catch (err) {
         console.error("Error loading users:", err);
+    } finally {
+        usersLoading = false;
     }
 }
 
@@ -165,7 +178,7 @@ export function createChatbox(user) {
     statusDot.style.borderRadius = "50%";
     statusDot.style.marginRight = "8px";
     statusDot.style.backgroundColor = user.online ? "#4caf50" : "#ccc";
-    // statusDot.title = user.online ? "Online" : "Offline";
+
     title.prepend(statusDot);
 
     const closeButton = document.createElement("button");
@@ -202,7 +215,7 @@ export async function openChatWindow(user) {
 
 
         const userItem = document.querySelector(`.user-item[data-userid="${user.id}"]`);
-        const dot = userItem?.querySelector(".notification-dot");
+        const dot = userItem?.querySelector(".notification-dot");///////
         if (dot) dot.remove();
 
 
@@ -263,20 +276,37 @@ export async function openChatWindow(user) {
     const sendButton = document.createElement("button");
     sendButton.textContent = "Send";
 
+    const tokens = document.cookie.split("; ");
+    let oldtoken = {}
+    for (let token of tokens) {
+        let [key, value] = token.split("=")
+        oldtoken[key] = value
+    }
     sendButton.addEventListener("click", () => {
         const msg = input.value.trim();
         if (!msg) return;
 
-        const tokenCookie = document.cookie.split("; ").find(row => row.startsWith("session_token="));
-        if (!tokenCookie) return logout();
-        const token = tokenCookie.split("=")[1];
+
+        const tokens = document.cookie.split("; ");
+        let newtoken = {}
+        for (let token of tokens) {
+            let [key, value] = token.split("=")
+            newtoken[key] = value
+        }
+        if (oldtoken["session_token"] !== newtoken["session_token"]) {
+            logout()
+        }
+
+        // const tokenCookie = document.cookie.split("; ").find(row => row.startsWith("session_token="));
+        // if (!tokenCookie) logout();
+        // const token = tokenCookie.split("=")[1];
 
         const newMsg = {
             from: currentUserId,
             to: user.id,
             from_name: currentUserNickname,
             content: msg,
-            createdat: new Date().toISOString()
+            // createdat: new Date().toISOString()
         };
 
         const msgEl = buildMessageElement(newMsg);
@@ -287,7 +317,7 @@ export async function openChatWindow(user) {
 
         socket.send(JSON.stringify({
             ...newMsg,
-            token
+            token: newtoken["session_token"]
         }));
 
         input.value = "";
