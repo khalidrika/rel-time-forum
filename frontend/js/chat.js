@@ -97,31 +97,6 @@ export async function renderUsers() {
     }
 }
 
-
-function moveUserListForResponsive() {
-    const userList = document.querySelector('.user-list');
-    const sidebar = document.getElementById('sidebar');
-    const app = document.getElementById('app');
-    const usersHeader = document.getElementById('users-header');
-    if (!userList || !sidebar || !app) return;
-
-    if (window.innerWidth <= 700) {
-        if (!app.contains(userList)) {
-
-            app.prepend(userList);
-
-        }
-        userList.prepend(usersHeader);
-    } else {
-        if (sidebar && !sidebar.contains(userList)) {
-            sidebar.appendChild(userList);
-        }
-    }
-}
-
-window.addEventListener('resize', moveUserListForResponsive);
-window.addEventListener('DOMContentLoaded', moveUserListForResponsive);
-
 export function buildMessageElement(msg) {
     const msgEl = document.createElement("div");
     msgEl.className = `message ${msg.from === currentUserId ? "sent" : "received"}`;
