@@ -1,0 +1,821 @@
+/* ================ */
+/* === Variables === */
+/* ================ */
+:root {
+    /* Dark Theme Colors */
+    --primary: #2c3e50;
+    --primary-hover: #1a252f;
+    --secondary: #3498db;
+    --secondary-hover: #2980b9;
+    --danger: #e74c3c;
+    --danger-hover: #c0392b;
+    --success: #27ae60;
+    --success-hover: #219653;
+    --info: #2980b9;
+
+    /* Backgrounds */
+    --body-bg: #1e272e;
+    --card-bg: #2d3436;
+    --white: #f5f6fa;
+    --modal-bg: #2d3436;
+    --message-sent: #273c75;
+    --message-received: #353b48;
+
+    /* Text */
+    --text-dark: #f5f6fa;
+    --text-medium: #dcdde1;
+    --text-light: #a4b0be;
+    --text-muted: #7f8fa6;
+
+    /* Borders & Shadows */
+    --border-radius: 8px;
+    --border-color: #3d3d3d;
+    --shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+
+    /* Spacing */
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+}
+
+.users-box {
+    margin-top: 70px;
+}
+
+.user-item .notification-dot {
+    width: 8px;
+    height: 8px;
+    background-color: red;
+    border-radius: 50%;
+    display: inline-block;
+    margin-left: 6px;
+}
+
+/* ================ */
+/* === Base Styles === */
+/* ================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    overflow-wrap: anywhere;
+    white-space: normal;
+    word-break: break-word;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+    background-color: var(--body-bg);
+    color: var(--text-medium);
+    padding-top: 70px;
+    line-height: 1.6;
+}
+
+/* ================ */
+/* === Header === */
+/* ================ */
+#main-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--primary);
+    color: var(--white);
+    padding: 15px 0;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* ================ */
+/* === Buttons === */
+/* ================ */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.85rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-primary {
+    background-color: var(--secondary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--secondary-hover);
+}
+
+.btn-danger {
+    background-color: var(--danger);
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: var(--danger-hover);
+}
+
+.btn-success {
+    background-color: var(--success);
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: var(--success-hover);
+}
+
+.submit-logout {
+    border-radius: 7px;
+    position: fixed;
+    top: 15px;
+    right: 20px;
+    z-index: 1001;
+    padding: 8px 16px;
+}
+
+/* ================ */
+/* === Messages === */
+/* ================ */
+.message {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    max-width: 70%;
+    margin: 8px;
+    padding: 12px 16px;
+    border-radius: var(--border-radius);
+    display: inline-block;
+    clear: both;
+    box-shadow: var(--shadow);
+}
+
+.message.sent {
+    background-color: var(--message-sent);
+    color: var(--white);
+    float: right;
+    text-align: right;
+    border-bottom-right-radius: 0;
+}
+
+.message.received {
+    background-color: var(--message-received);
+    color: var(--white);
+    float: left;
+    text-align: left;
+    border-bottom-left-radius: 0;
+}
+
+.message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.message-header strong {
+    cursor: help;
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+}
+
+.message-header .created {
+    /* font-size: 0.8em; */
+    color: #aaa;
+    cursor: help;
+}
+
+
+
+.created {
+    display: block;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 6px;
+}
+
+/* ================ */
+/* === Chat Box === */
+/* ================ */
+.chat-box {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    width: 350px;
+    box-shadow: var(--shadow);
+    padding: 12px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    margin-bottom: 12px;
+    color: var(--white);
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.messages {
+    height: 300px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    padding: 10px;
+    margin-bottom: 12px;
+    background: var(--primary);
+    border-radius: var(--border-radius);
+}
+
+.chat-input-container {
+    display: flex;
+    gap: 8px;
+}
+
+.chat-box input {
+    flex: 1;
+    padding: 10px;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    background: var(--card-bg);
+    color: var(--text-medium);
+}
+
+.chat-box button {
+    padding: 10px 16px;
+}
+
+/* ================ */
+/* === User List === */
+/* ================ */
+#sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100vh;
+    overflow-y: auto;
+    background-color: #1e272e;
+    padding: 15px;
+    z-index: 999;
+    border-right: 1px solid #444;
+}
+
+#app {
+    margin-left: 260px;
+    padding: 20px;
+}
+
+.user-list {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    margin: 20px auto;
+    padding: var(--spacing-md);
+    width: 80%;
+    max-width: 600px;
+    box-shadow: var(--shadow);
+}
+
+.user-list h2 {
+    color: var(--white);
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.user-item {
+    padding: 12px 16px;
+    margin: 8px 0;
+    background-color: var(--primary);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--text-medium);
+    border-left: 4px solid var(--secondary);
+}
+
+.user-item:hover {
+    background-color: var(--secondary);
+    color: var(--white);
+    transform: translateX(5px);
+}
+
+/* ================ */
+/* === Posts === */
+/* ================ */
+.post {
+    overflow-wrap: anywhere;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-md);
+    margin: var(--spacing-md) auto;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    text-align: left;
+}
+
+.post:hover {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+    transform: translateY(-3px);
+}
+
+.users {
+    display: none;
+}
+
+.post-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
+    font-size: 0.85rem;
+    color: var(--text-light);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.post h3 {
+    overflow-wrap: anywhere;
+    white-space: normal;
+    word-break: break-word;
+    color: var(--white);
+    margin: var(--spacing-sm) 0;
+    font-size: 1.3rem;
+}
+
+.post p {
+    overflow-wrap: anywhere;
+    white-space: normal;
+    word-break: break-word;
+    color: var (--text-medium);
+    margin: var(--spacing-sm) 0;
+    line-height: 1.7;
+}
+
+.comment {
+    overflow-wrap: anywhere;
+    background-color: var(--primary);
+    padding: 12px;
+    margin: 12px auto;
+    border-left: 4px solid var(--secondary);
+    border-radius: var(--border-radius);
+    width: 85%;
+    max-width: 550px;
+    box-shadow: var(--shadow);
+}
+
+.textcomment {
+    overflow-wrap: anywhere;
+    white-space: normal;
+    word-break: break-word;
+    max-width: 550px;
+    width: 100%;
+    margin: auto;
+}
+
+.sendcomment,
+.back-button {
+    width: 100%;
+    border-radius: 7px;
+    max-width: 150px;
+    margin: auto;
+    height: 30px;
+}
+
+.view-comments-btn {
+    height: 30px;
+}
+
+/* ================ */
+/* === Forms === */
+/* ================ */
+.post-form,
+#comment-form {
+    overflow-wrap: anywhere;
+    white-space: normal;
+    word-break: break-word;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+h2.comment-for-post {
+    overflow-wrap: anywhere;
+    white-space: normal;
+    word-break: break-word;
+}
+
+.post-input,
+.post-textarea,
+.input-field,
+#comment-form textarea {
+    overflow: anywhere;
+    white-space: normal;
+    word-break: break-word;
+    width: 100%;
+    padding: 12px;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    background: var(--primary);
+    color: var(--text-medium);
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+
+.post-input:focus,
+.post-textarea:focus,
+.input-field:focus {
+    border-color: var(--secondary);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.3);
+}
+
+.post-submit,
+.submit-button {
+    background-color: var(--secondary);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    margin-top: var(--spacing-sm);
+}
+
+.post-submit:hover,
+.submit-button:hover {
+    background-color: var(--secondary-hover);
+}
+
+/* ================ */
+/* === Modals === */
+/* ================ */
+.modal-overlay,
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-dialog,
+.post-dialog {
+    background-color: var(--modal-bg);
+    width: 90%;
+    max-width: 400px;
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    text-align: center;
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--border-color);
+}
+
+.post-dialog {
+    max-width: 600px;
+}
+
+.close-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-light);
+    transition: all 0.3s ease;
+    background: none;
+    border: none;
+}
+
+.close-button:hover {
+    color: var(--danger);
+    transform: rotate(90deg);
+}
+
+/* ================ */
+/* === FAB Button === */
+/* ================ */
+.fab {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: var(--secondary);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.fab:hover {
+    transform: rotate(90deg) scale(1.1);
+    background-color: var(--secondary-hover);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+}
+
+/* ================ */
+/* === Utility Classes === */
+/* ================ */
+.hidden {
+    visibility: hidden;
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mt-1 {
+    margin-top: var(--spacing-sm);
+}
+
+.mt-2 {
+    margin-top: var(--spacing-md);
+}
+
+.mt-3 {
+    margin-top: var(--spacing-lg);
+}
+
+.mb-1 {
+    margin-bottom: var(--spacing-sm);
+}
+
+.mb-2 {
+    margin-bottom: var(--spacing-md);
+}
+
+.mb-3 {
+    margin-bottom: var(--spacing-lg);
+}
+
+/* ================ */
+/* === Responsive === */
+/* ================ */
+@media (max-width: 900px) {
+    #sidebar {
+        width: 180px;
+    }
+
+    #app {
+        margin-left: 180px;
+    }
+
+    .user-list {
+        width: 95%;
+    }
+
+    .post {
+        width: 98%;
+    }
+
+    .chat-box {
+        width: 35%;
+        position: right;
+    }
+
+    .chat-input-container {
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .chat-box input {
+        font-size: 1em;
+        padding: 8px;
+    }
+
+    .chat-box button {
+        font-size: 1em;
+        padding: 8px 12px;
+    }
+}
+
+@media (max-width: 700px) {
+    .users {
+        display: block;
+        margin-top: 20px;
+    }
+
+    #sidebar {
+        display: none;
+    }
+
+    #app {
+        margin-left: 0;
+        padding: 126px 8px 8px 8px;
+        /* 70px header + 56px user-list */
+        position: relative;
+    }
+
+    .user-list {
+        position: fixed;
+        top: 120px;
+        /* below header */
+        left: 0;
+        width: 100vw;
+        max-width: 100vw;
+        border-radius: 0;
+        margin: 0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        z-index: 1001;
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
+        background: var(--card-bg);
+        padding: 8px 0 8px 0;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .user-list h2 {
+        display: none;
+    }
+
+    .user-item {
+        min-width: 110px;
+        margin: 0 4px;
+        border-radius: var(--border-radius);
+        border-left: 4px solid var(--secondary);
+        background: var(--primary);
+        text-align: center;
+        flex: 0 0 auto;
+        box-shadow: none;
+    }
+
+    .chat-box {
+        position: right;
+        width: 30%;
+        bottom: 0;
+    }
+
+    .messages {
+        height: 40vh;
+        min-height: 180px;
+        padding: 6px;
+    }
+
+    .chat-header {
+        font-size: 1.1em;
+        padding-bottom: 4px;
+    }
+
+    .chat-input-container {
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .chat-box input {
+        font-size: 1em;
+        padding: 8px;
+    }
+
+    .chat-box button {
+        font-size: 1em;
+        padding: 8px 12px;
+    }
+
+}
+
+@media (max-width: 500px) {
+    #app {
+        padding-top: 118px;
+        /* 70px header + 48px user-list */
+    }
+
+    .user-list {
+        top: 120px;
+        padding: 4px 0 4px 0;
+        gap: 4px;
+    }
+
+    .user-item {
+        min-width: 90px;
+        font-size: 0.95em;
+        padding: 8px 4px;
+    }
+
+    .users {
+        display: block;
+        margin-top: 20px;
+    }
+
+    .chat-box {
+        position: right;
+        width: 60%;
+    }
+
+    .messages {
+        height: 35vh;
+        min-height: 120px;
+        padding: 2px;
+    }
+
+    .chat-header {
+        font-size: 1em;
+        padding-bottom: 2px;
+    }
+
+    .chat-input-container {
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .chat-box input {
+        font-size: 0.95em;
+        padding: 6px;
+    }
+
+    .chat-box button {
+        font-size: 0.95em;
+        padding: 6px 8px;
+    }
+
+    .user-list,
+    .post,
+    .comment {
+        width: 100vw;
+        max-width: 100vw;
+        border-radius: 0;
+        margin: 0;
+        box-shadow: none;
+    }
+
+    .modal-dialog,
+    .post-dialog {
+        width: 98vw;
+        max-width: 98vw;
+        padding: 8px;
+        border-radius: 0;
+    }
+
+    .fab {
+        right: 10px;
+        bottom: 10px;
+        width: 48px;
+        height: 48px;
+        font-size: 18px;
+    }
+
+    .users {
+        display: block;
+        margin-top: 20px;
+    }
+}
