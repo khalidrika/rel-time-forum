@@ -2,6 +2,7 @@ package backend
 
 import (
 	"encoding/json"
+	"html"
 	"log"
 	"net/http"
 	"strings"
@@ -72,6 +73,9 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	req.Title = html.EscapeString(req.Title)
+	req.Content = html.EscapeString(req.Content)
+
 	stmt, err := DB.Prepare("INSERT INTO posts (user_id, title, content, created_at) VALUES (?, ?, ?, ?)")
 	if err != nil {
 		ErrorHandler(w, "Failed to prepare statement", http.StatusInternalServerError)
@@ -92,39 +96,41 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(req)
 }
 
-func AddCommentHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		ErrorHandler(w, "Method Not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-	userId, err := GetUserIDFromRequest(r)
-	if err != nil {
-		ErrorHandler(w, "unauthorized", http.StatusUnauthorized)
-		return
-	}
-	postID := r.URL.Query().Get("postId")
-	if postID == "" {
-		ErrorHandler(w, "missing posted", http.StatusBadRequest)
-		return
-	}
+// func AddCommentHandler(w http.ResponseWriter, r *http.Request) {
+// 	if r.Method != http.MethodPost {
+// 		ErrorHandler(w, "Method Not allowed", http.StatusMethodNotAllowed)
+// 		return
+// 	}
+// 	userId, err := GetUserIDFromRequest(r)
+// 	if err != nil {
+// 		ErrorHandler(w, "unauthorized", http.StatusUnauthorized)
+// 		return
+// 	}
+// 	postID := r.URL.Query().Get("postId")
+// 	if postID == "" {
+// 		ErrorHandler(w, "missing posted", http.StatusBadRequest)
+// 		return
+// 	}
 
-	var body struct {
-		content string `json:"content"`
-	}
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		ErrorHandler(w, "invalid comment", http.StatusBadRequest)
-		return
-	}
-	_, err = DB.Exec(`
-	INSERT INTO comments (post_id, user_id, content)
-	VALUES (?, ?, ?)
-	`, postID, userId, body.content)
-	if err != nil {
-		ErrorHandler(w, "FAiled to save comment", http.StatusInternalServerError)
-		return
-	}
-	w.WriteHeader(http.StatusAccepted)
-	json.NewEncoder(w).Encode(map[string]string{
-		"message": "Comment added",
-	})
-}
+// 	var body struct {
+// 		Content string `json:"content"`
+// 	}
+// 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+// 		ErrorHandler(w, "invalid comment", http.StatusBadRequest)
+// 		return
+// 	}
+
+// 	body.Content = html.EscapeString(body.Content)
+// 	_, err = DB.Exec(`
+// 	INSERT INTO comments (post_id, user_id, content)
+// 	VALUES (?, ?, ?)
+// 	`, postID, userId, body.Content)
+// 	if err != nil {
+// 		ErrorHandler(w, "FAiled to save comment", http.StatusInternalServerError)
+// 		return
+// 	}
+// 	w.WriteHeader(http.StatusAccepted)
+// 	json.NewEncoder(w).Encode(map[string]string{
+// 		"message": "Comment added",
+// 	})
+// }

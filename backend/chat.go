@@ -2,6 +2,7 @@ package backend
 
 import (
 	"encoding/json"
+	"html"
 	"log"
 	"net/http"
 	"strconv"
@@ -121,6 +122,7 @@ func (m *Manager) ChatHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func InsertMsg(msg string, from, to int) error {
+	msg = html.EscapeString(msg)
 	_, err := DB.Exec(`
 	INSERT INTO messages
 	(sender_id, receiver_id, content, created_at) VALUES (?, ?, ?, ?)
