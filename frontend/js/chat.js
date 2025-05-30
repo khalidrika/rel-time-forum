@@ -281,7 +281,7 @@ export async function openChatWindow(user) {
             to: user.id,
             from_name: currentUserNickname,
             content: msg,
-            // createdat: new Date().toISOString()
+            createdat: new Date().toISOString()
         };
 
         const msgEl = buildMessageElement(newMsg);
