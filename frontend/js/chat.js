@@ -262,12 +262,6 @@ export async function openChatWindow(user) {
             createdat: new Date().toISOString()
         };
 
-        const msgEl = buildMessageElement(newMsg);
-        if (msgEl) {
-            messages.appendChild(msgEl);
-            messages.scrollTop = messages.scrollHeight;
-        }
-
         socket.send(JSON.stringify({
             ...newMsg,
             token,
@@ -280,5 +274,6 @@ export async function openChatWindow(user) {
 
     inputWrapper.appendChild(input);
     inputWrapper.appendChild(sendButton);
+    console.log("K:", inputWrapper.textContent)
     chatBox.appendChild(inputWrapper);
 }
