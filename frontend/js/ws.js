@@ -9,8 +9,6 @@ export function UpgredConnetion() {
     socket = new WebSocket(`ws://${host[1]}/ws`);
 }
 
-const input = document.getElementById("inpuut");
-
 export function socketEvent() {
     socket.onopen = () => {
         console.log("connection is open");
