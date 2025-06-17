@@ -29,7 +29,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
         clearintirval = setInterval(() => {
           renderUsers();
-        }, 1000);/////
+        }, 10000);/////
 
       } catch (error) {
         console.error("Failed to render posts:", error);

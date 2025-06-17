@@ -33,7 +33,7 @@ export function createNewPostModal() {
   titleInput.className = "post-input";
   titleInput.placeholder = "Enter a descriptive title...";
   titleInput.maxLength = 500;
-  titleInput.minLength = 4;
+  
   titleInput.required = true;
 
   const contentLabel = document.createElement("label");
@@ -46,7 +46,7 @@ export function createNewPostModal() {
   contentTextarea.className = "post-textarea";
   contentTextarea.rows = 6;
   contentTextarea.placeholder = "Share your thoughts (gol xi haja)...";
-  contentTextarea.maxLength = 8000;
+  contentTextarea.maxLength = 2000;
   contentTextarea.required = true;
 
   const submitButton = document.createElement("button");
@@ -114,16 +114,22 @@ export async function showPostWithComments(post) {
 
   const commentHTML = (Array.isArray(comments) && comments.length > 0)
     ? comments.map(c => `
-        <div class="comment">
-          <p><strong>${c.nickname}</strong> - <em>${new Date(c.createdAt).toLocaleString()}</em></p>
+      <div class="comment">
+        <div class="comment-header">
+          <span class="time">${new Date(c.createdAt).toLocaleString()}</span>
+          <span class="name"><strong>${c.nickname}</strong></span>
+        </div>
+        <div class="comment-content">
           <p>${c.content}</p>
         </div>
-      `).join('')
+      </div>
+    `).join('')
     : `<p>No comments here</p>`;
+
 
   const commentForm = `
     <form id="comment-form">
-    <textarea class="textcomment" name="content" placeholder="Write a comment..." required></textarea>
+    <textarea class="textcomment" name="content" maxLength="200" placeholder="Write a comment..." required></textarea>
     <button class="sendcomment" type="submit">Submit</button>
     </form>
     <button id="back-to-posts" class="back-button">Back to Posts</button>

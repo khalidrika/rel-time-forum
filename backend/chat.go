@@ -149,8 +149,7 @@ func (m *Manager) broadcast(id int, message Message) {
 }
 
 func (m *Manager) removeclient(c *Client) {
-	// m.Lock()
-	// defer m.Unlock()
+
 	clients, ok := m.Users[c.Id]
 	if !ok {
 		return

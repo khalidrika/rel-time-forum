@@ -38,21 +38,39 @@
     --spacing-lg: 1.5rem;
 }
 
+.comment {
+    position: relative;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    padding-top: 35px;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    top: 5px;
+    left: 10px;
+    right: 10px;
+    font-size: 14px;
+    padding: 2px 5px;
+}
+
+.comment-content {
+    margin-top: 10px;
+}
+
 .users-box {
     margin-top: 70px;
 }
 
-/* .notificationcon {
-    width: 50px;
-    height: 50px;
-    background-color: #219653;
-} */
-
 .notification-dot {
+    position: fixed;
     width: 200px;
     height: 50px;
-    background-color: lightcoral;
-    border-radius: 16%;
+    background-color: rgb(236, 245, 108);
+    border-radius: 3%;
     display: inline-block;
     margin-left: 6px;
     color: #1a252f;
@@ -625,10 +643,12 @@ h2.comment-for-post {
     #app {
         margin-left: 180px;
     }
+
     .users {
         display: block;
         margin-top: 20px;
     }
+
     .user-list {
         width: 95%;
     }
@@ -663,25 +683,28 @@ h2.comment-for-post {
         display: block;
         margin-top: 20px;
     }
+
     .users-box {
         display: block;
         margin-top: 0px;
     }
+
     #users-header {
         display: block;
         text-align: center;
         margin-bottom: 20px;
     }
+
     #sidebar {
-    position: relative;
-    width: auto;
-    height: auto;
-    overflow-y: auto;
-    background-color: #1e272e;
-    padding: 15px;
-    z-index: 999;
-    border-right: 1px solid #444;
-}
+        position: relative;
+        width: auto;
+        height: auto;
+        overflow-y: auto;
+        background-color: #1e272e;
+        padding: 15px;
+        z-index: 999;
+        border-right: 1px solid #444;
+    }
 
     #app {
         margin-left: 0;

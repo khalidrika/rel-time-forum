@@ -103,7 +103,7 @@ export function renderRegisterForm() {
               Password
           <span>*</span>
         </label>
-      <input type="password" name="password" placeholder="Password" id="signUpPassword" class="input-field" required minlength="4" maxlength="100" />
+      <input type="password" name="password" placeholder="Password" id="signUpPassword" class="input-field" required minlength="4" maxlength="50" />
       <button type="submit" id="signUpSubmit" class="submit-button">Register</button>
     </form>
 <p>Already have an account? <a href="#" id="show-login">Login here</a></p>

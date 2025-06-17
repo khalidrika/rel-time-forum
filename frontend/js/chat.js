@@ -116,7 +116,7 @@ export function buildMessageElement(msg) {
     createdAt.className = "created";
 
     const date = new Date(msg.createdat);
-    createdAt.textContent = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // مثل: 14:05
+    createdAt.textContent = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     createdAt.title = date.toLocaleString();
 
     // createdAt.textContent = new Date(msg.createdat).toLocaleString();
@@ -136,7 +136,7 @@ export function createChatbox(user) {
 
     const chatBox = document.createElement("div");
     chatBox.className = "chat-box";
-    chatBox.dataset.userId = String(user.id); // تأكد أنه string
+    chatBox.dataset.userId = String(user.id);
     chatBox.dataset.userid = user.id; // real-time updates
     const header = document.createElement("div");
     header.className = "chat-header";
@@ -246,6 +246,7 @@ export async function openChatWindow(user) {
 
     const input = document.createElement("input");
     input.type = "text";
+    input.maxLength = 100;
     input.placeholder = "Type a message...";
 
     const sendButton = document.createElement("button");
@@ -272,16 +273,11 @@ export async function openChatWindow(user) {
             logout()
         }
 
-        // const tokenCookie = document.cookie.split("; ").find(row => row.startsWith("session_token="));
-        // if (!tokenCookie) logout();
-        // const token = tokenCookie.split("=")[1];
-
         const newMsg = {
             from: currentUserId,
             to: user.id,
             from_name: currentUserNickname,
             content: msg,
-            createdat: new Date().toISOString()
         };
 
         const msgEl = buildMessageElement(newMsg);

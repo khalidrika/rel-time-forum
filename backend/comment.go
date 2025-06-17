@@ -18,11 +18,6 @@ type Comment struct {
 	CreatedAt time.Time `json:"createdAt"`
 }
 
-// type CreateCommentRequest struct {
-// 	Id        int64     `json:"id"`
-// 	Content   string    `json:"content"`
-// 	CreatedAt time.Time `json:"createdAt"`
-// }
 
 func CreateCommentHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {

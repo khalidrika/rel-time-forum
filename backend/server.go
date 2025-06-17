@@ -22,7 +22,7 @@ func Server(handler http.Handler) error {
 	if envPort != "" {
 		// port = ":8080"
 	}
-	listener, err := net.Listen("tcp", ":8081")
+	listener, err := net.Listen("tcp", ":8084")
 	if err != nil {
 		log.Fatalf("error starting server : %v", err)
 		return err
