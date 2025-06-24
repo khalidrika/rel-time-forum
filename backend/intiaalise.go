@@ -9,14 +9,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-var (
-	CloudLinks *Links
-	DB         *sql.DB
-)
-
-type Links struct {
-	ErrorPage string `json:"error"`
-}
+var DB *sql.DB
 
 func Initialise() {
 	InitialiseDB()

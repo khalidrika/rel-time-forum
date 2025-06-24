@@ -4,12 +4,14 @@ import { renderPosts } from "./post.js";
 import { socketEvent, UpgredConnetion } from "./ws.js";
 
 let routes = {};
+
 export function clearpage() {
   document.getElementById("app").innerHTML = "";
   const sidebar = document.getElementById("sidebar");
   if (sidebar) sidebar.innerHTML = "";
 
 }
+
 export let clearintirval
 window.addEventListener("DOMContentLoaded", () => {
   routes = {
@@ -54,12 +56,10 @@ async function checkSessionAndRedirect() {
   }
 }
 
-
 export function navigate(path) {
   history.pushState({}, '', path);
   renderPage(path);
 }
-
 
 export function renderPage(path) {
   if (routes[path]) {
@@ -71,6 +71,5 @@ export function renderPage(path) {
 }
 
 window.addEventListener('popstate', () => {
-  console.log("-----------------1a");
   checkSessionAndRedirect()
 })

@@ -1,6 +1,7 @@
 import { buildMessageElement, currentUserId } from "./chat.js";
 
 export let socket = null
+
 export function UpgredConnetion() {
     if (socket !== null) {
         return
@@ -8,8 +9,6 @@ export function UpgredConnetion() {
     const host = window.location.origin.split("//");
     socket = new WebSocket(`ws://${host[1]}/ws`);
 }
-
-// const input = document.getElementById("inpuut");
 
 export function socketEvent() {
     socket.onopen = () => {
@@ -26,8 +25,6 @@ export function socketEvent() {
             return;
         }
 
-        /////////////////////////
-
         const senderchat = document.getElementById(`${msg.to}`);
         console.log(msg.to);
         console.log(msg.from);
@@ -37,8 +34,6 @@ export function socketEvent() {
 
         if (senderchat) {
             writeMessage(msg);
-
-
         } else if (receivechat) {
             writeMessage(msg);
         } else {
@@ -57,12 +52,13 @@ export function socketEvent() {
 
             }
         }
-
     }
+
     socket.onclose = () => {
         socket = null;
     };
 }
+
 function writeMessage(msg) {
     const userId = msg.from === currentUserId ? String(msg.to) : String(msg.from);
 
@@ -82,7 +78,6 @@ function writeMessage(msg) {
     const empty = messages.querySelector(".no-messages");
     if (empty) empty.remove();
 }
-
 
 export function updateUserStatus(userId, online) {
     // Update user list

@@ -1,6 +1,7 @@
 import { clearintirval, navigate } from "./routes.js";
 import { renderPosts } from "./post.js";
 import { socket } from "./ws.js";
+
 export function renderLoginForm() {
   const form = `
   <div class="modal-overlay">

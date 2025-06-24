@@ -1,7 +1,6 @@
 import { logout } from "./auth.js";
 import { currentUserNickname, renderUsers } from "./chat.js";
 
-
 export function createNewPostModal() {
   const modal = document.createElement("div");
   modal.id = "newPostModal";
